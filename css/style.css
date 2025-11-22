@@ -1,0 +1,137 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin:0;
+    font-family:Inter, system-ui, -apple-system, 'Segue UI', Reboto, Arial;
+    background:linear-gradient(18deg, #f6f6f9, #eef8f6);
+    color:#0b2540;
+    overflow-x:hidden;
+}
+
+app {
+    max-width:1100px;
+    margin:24px auto;
+    padding:18px;
+}
+
+.header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+}
+
+.logo {
+    font-weight:800;
+    color:#2b7cff;
+    font-size:20px;
+    letter-spacing:0.6px;
+}
+
+.hud {
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.coins {
+    display:flex;
+    gap:8px;
+    align-items:center;
+    background:#fff;
+    padding:6px 12px;
+    border-radius:999px;
+    box-shadow:0 8px 24px rgba(10, 30, 60, 0.06);
+    font-weight:700;
+}
+
+/*Buttons*/
+.btn {
+    padding: 10px 14px;
+    border-radius:10px;
+    border:0;
+    cursor:pointer;
+    background:#6c5ce7;
+    color:#fff;
+    font-weight:700;
+    transition:0.15s;
+}
+
+.btn:hover {
+    opacity:0.85;
+}
+
+.btn.ghost {
+    background: transparent;
+    color:#6c5ce7;
+    border:1px solid rgba(108,92,231,0.14);
+    box-shadow:none;
+}
+
+.view {
+    margin-top:18px;
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+    flex-wrap:wrap;
+}
+
+.hero-list{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.hero {
+    width:86px;
+    height:86px;
+    border-radius:14px;
+    background:#fff;
+    box-shadow:0 10px 28px rgba(0,0,0,0.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hero img {
+    width:70%;
+    height:70%;
+    object-fit:contain;
+}
+
+.hero.selected {
+    transform: translate(-6px);
+    box-shadow:0 20px 36px rgba(0,0,0,0.14);
+    outline:4px solid rgba(79, 209, 123, 0.12);
+}
+
+.hero .label {
+    position:absolute;
+    bottom:6px;
+    left:6px;
+    font-size:11px;
+    background:rgba(255, 255, 255, 0.9);
+    padding:4px 6px;
+    border-radius:8px;
+}
+
+/* Race Track*/
+.track {
+    height:320px;
+    border-radius:14px;
+    background: linear-gradient(180deg, #eef7f6, #f8fbfb);
+    position:relative;
+    overflow:hidden;
+    padding:16px;
+    box-shadow:0 20px 50px rgba(30,80,60,0.03);
+}
+
+.lane {
+    position:absolute;
+}
