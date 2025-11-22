@@ -134,4 +134,83 @@ app {
 
 .lane {
     position:absolute;
+    left:18px;
+    right:18px;
+    height:72px;
+    background:rgba(12,20,40,0.03);
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    padding-left:14px;
+}
+
+/*Finishing lane*/
+.finish {
+    position:absolute;
+    right:18px;
+    top:0;
+    bottom:0;
+    width:6px;
+    background:linear-gradient(180deg, #ffd86a, #ffb86b);
+    border-radius:4px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.06);
+}
+
+.sprite {
+    position:absolute;
+    width:92px;
+    height:92px;
+    left:18px;
+    transition:transform 120ms linear;
+    will-change:transform;
+    z-index:2;
+}
+
+.sprite img {
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.badge {
+    position:absolute;
+    left:8px;
+    top:6px;
+    background:#fff;
+    padding:6px;
+    border-radius:8px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.06);
+    font-weight:700;
+    font-size:12px;
+}
+
+.go {
+    position:absolute;
+    left:50%;
+    top:46%;
+    transform: translate(-50%, -50%) scale(0.6);
+    width:120px;
+    height:120px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-weight:900;
+    font-size:36px;
+    background: linear-gradient(180deg,#8ef0b0,#2ecc71);
+    box-shadow:0 24px 40px rgba(33,150,83,0.14);
+    opacity:0;
+    transition:all .36s cubic-bezier(0.2,0.9,0.3,1);
+    pointer-events:none;
+}
+
+.go.show{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(1);
+}
+
+/*typing area*/
+.typingArea {
+    margin
 }
