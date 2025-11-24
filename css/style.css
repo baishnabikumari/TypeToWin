@@ -276,4 +276,65 @@ app {
     background:rgba(3,6,10,0.45);
 }
 
-.modal-card{}
+.modal-card{
+    width:760px;
+    max-height:80vh;
+    overflow:auto;
+    background:#fff;
+    padding:18px;
+    border-radius:12px;
+    box-shadow:0 30px 70px rgba(2,12,40,0.4);
+}
+
+.shopGrid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12;
+    margin-top:12px;
+}
+
+.shopItem {
+    background:#f7fbfd;
+    padding:12px;
+    border-radius:12px;
+    text-align:center;
+}
+
+/*Confetti for colors when you will win*/
+.confetti {
+    position:fixed;
+    width:10px;
+    height:10px;
+    border-radius:3px;
+    pointer-events:none;
+    z-index:9999;
+}
+
+/*trail*/
+.trail {
+    position:absolute;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:rgba(120, 200, 255, 0.45);
+    filter:blur(6px);
+    pointer-events:none;
+    z-index:1;
+    transition:opacity 0.3 linear;
+}
+
+/*responsive*/
+@media (max-width: 800px) {
+    .track {height:240px; }
+    .sprite { width:64px; height:64px;}
+    .displayText {font-size:18px;}
+    .shopGrid {grid-template-columns:repeat(2,1fr);}
+}
+
+/*reducing motion*/
+@media (prefers-reduced-motion:reduce) {
+    .sprite, .go, .trail, .confetti {
+        transition:none !important;
+        animation:none !important;
+    }
+}

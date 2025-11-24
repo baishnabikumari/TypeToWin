@@ -28,9 +28,8 @@ function renderHeroes(){
         if (store.selected === h.id) d.classList.add("selected");
 
         d.innerHTML = `
-      <img src="${h.img}">
-      <div class="label">${h.name}</div>
-    `;
+        <img src="${h.img}">
+        <div class="label">${h.name}</div>`;
 
     d.onclick = () => {
         if (!store.unlocked.includes(h.id)) {
@@ -47,3 +46,38 @@ function renderHeroes(){
     });
 }
 
+//making shop functional
+function openShop() {
+    shopModal.style.display = "flex";
+    renderShop();
+}
+
+function closeShop() {
+    shopModal.style.display = "none";
+}
+
+function renderShop() {
+    shopGrid.innerHTML = "";
+
+    HEROES.forEach((h)=> {
+        const item = document.createElement("div"):
+        item.className = "shopItem";
+
+        const unlocked = store.unlocked.includes(h.id);
+        item.innerHTML = `
+        <img src="${h.img}" style="width:72px">
+        <h4>${h.name}</h4>
+        <div>${unlocked ? "Unlocked" : h.price + " R"}</div>`;
+
+        if (!unlocked) {
+            const btn = document.createElement("button");
+            btn.className = 'btn';
+            btn.textContent = "Buy";
+
+            btn.onclick = () => {
+                
+            }
+        }
+
+    })
+}
