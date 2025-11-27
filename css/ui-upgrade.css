@@ -96,15 +96,15 @@ body {
 
 /*Selected Hero*/
 .hero.selected {
-  transform:scale(1.12) translateY(-14px);
-  box-shadow:0 20px 60px rgba(90,100,255,0.6), 0 0 25px rgba(255,255,255,0.9);
+  transform:scale(1.12);
 }
 
 /*Hero Image*/
 .hero img {
-  width:120px;
-  height:120px;
+  width:100px;
+  height:100px;
   object-fit:contain;
+  transform:scale(1);
 }
 
 /*Hero Label*/
@@ -166,4 +166,24 @@ body {
   padding:12px 24px;
   border-radius:999px;
   color:white;
+}
+
+.hero-row {
+    display:flex;
+    gap:26;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:nowrap;
+}
+
+.hero-carousel {
+    overflow:hidden;
+    width:100%;
+}
+
+.carousel-wrapper {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
 }
