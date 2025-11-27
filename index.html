@@ -5,28 +5,48 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>TypeToWin</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/ui-upgrade.css">
 </head>
 <body>
   <div class="app">
 
     <header class="header">
-      <h1 class="logo">TypeToWin</h1>
+      <div class="brand">
+        <span class="brand-label">TypeToWin</span>
+        <h1 class="brand-title">Choose Your Hero</h1>
+      </div>
+
       <div class="hud">
         <div class="coins">
-          <img src="assets/ui/coin.png" alt="coin" style="width:18px;height:18px;margin-right:6px;">
-          <span id="coinCount">0</span> R
+          <img src="assets/ui/coin.png" alt="coin">
+          <span id="coinCount">0</span>
         </div>
-        <button id="openShop" class="btn ghost">Shop</button>
+        <button id="openShop" class="shop-pill">Shop</button>
       </div>
     </header>
 
     <!--Home Screen-->
-    <main id="home" class="view">
-      <h2>Choose Your Hero</h2>
-      <div id="heroList" class="hero-list"></div>
+    <main id="home" class="view hero-ui">
+      <div class="carousel-wrapper">
+
+        <button class="carousel-btn left" id="prevHero">‹</button>
+
+        <div class="hero-carousel">
+          <div id="heroList" class="hero-list hero-row"></div>
+        </div>
+
+        <button class="carousel-btn right" id="nextHero">›</button>
+
+      </div>
+
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
 
       <div class="controls">
-        <button id="startBtn" class="btn">Start Race</button>
+        <button id="startBtn" class="btn primary">Start Race</button>
         <button id="resetBtn" class="btn ghost">Reset Progress</button>
       </div>
     </main>

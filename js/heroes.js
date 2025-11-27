@@ -11,7 +11,7 @@ export const HEROES = [
   {
     id: "beavy",
     name: "Beavy",
-    img: "assets/heroes/beavy.jpg",
+    img: "assets/heroes/beavy.png",
     price: 0,
     speed: 1,
   },
