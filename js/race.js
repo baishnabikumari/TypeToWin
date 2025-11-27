@@ -185,7 +185,69 @@ export function initRaceScene(onFinishCb) {
         //when player finishes
         if (!player.finished && player.progress >= TRACK_PX) {
             player.finished = true;
-            player.finished
+            player.finished = Date.now();
         }
+
+        // all done? all finished?
+        const allDone = players.every((p) => p.finished);
+
+        id (allDone) {
+            stop();
+            Finalize();
+            return;
+        }
+        requestAnimationFrame(loop);
+    }
+
+    //finalize race
+    function finalize() {
+        const elapsed = (Date.now() - (state.startTime || Date.now())) / 1000;
+        const grossWPM = Math.round((state.typed / 5) / (elapsed / 60));
+        const acc = state.typed ? Math.round((state.correct / state.typed) * 100) : 0;
+
+        const sorted = players.slice().sort((a, b) => a.finishTime - b.finishTime);
+        const order = sorted.map((p) => p.id);
+
+        //rewars system
+        let reward = 20;
+        if (order[0] === "you") reward += 50;
+        if (acc >= 90) reward += 10;
+
+        addCoins(reward);
+        save(store);
+        //effects
+        const trackRect = trackEl.getBoundingClientRect();
+        if (order[0] === "you") {
+            launchConfetti(trackRect.left + trackRect.width / 2, trackRect.top + 40);
+            SFX.victory.currentTime = 0;
+            SFX.victory.play();
+        } else {
+            SFX.lose.currentTime = 0;
+            SFX.lose.play();
+        }
+
+        coinFly(
+            trackRect.left + trackRect.width / 2,
+            trackRect.top + trackRect.height / 2,
+            document.querySelector('.coins')
+        );
+        document.getElementById("coinCount").textContent = store.coins;
+
+        //show result
+        resultsEl.style.display = "block";
+        resultsEl.innerHTML = `
+        <h3>Race Results</h3>
+        <p>WPM: <strong>${grossWPM}</strong></p>
+        <p><strong>Placement</strong><br>${order
+            .map((p, i) => `${i + 1}. ${p === "you" ? "you" : p}`)
+            .join("<br>")}</p>
+        <p>Coins earned: +${reward}</p>
+
+        <button class="btn" id="playAgain">Play Again</button>
+        `;
+
+        document.getElementById("playAgain").getEventListner("click", () => location.reload());
+
+        onFinishCb && onFinishCb({ wpm: grossWPM, acc, order, reward });
     }
 }
