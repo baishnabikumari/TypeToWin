@@ -1,62 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="uft-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>TypeToWin</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TypeToWin</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="app">
+  <div class="app">
 
-        <header class="header">
-            <h1 class="logo">TypeToWin</h1>
-            <div class="hud">
-                <div class="coins">
-                    <img src="assets/ui/coin.png" style="width:18px;height:18px;margin-right:6px;">
-                    <span id="coinCount">0</span> R
-                </div>
-                <button id="openShop" class="btn ghost">Shop</button>
-        </header>
-        <!--Home Screen-->
-        <main id="home" class="view">
-            <h2>Choose Your Hero</h2>
-            <div id="heroList" class="hero-list"></div>
-
-            <div class="controls">
-                <button id="startBtn" class="btn">Start Race</button>
-                <button id="resetBtn" class="btn ghost">Reset Progress</button>
-            </div>
-        </main>
-
-        <!--Race Screen-->
-        <section id="raceView" class="view" style="display:none;">
-            <div id="track" class="track"></div>
-            <div id="go" class="go">GO</div>
-            <div class="typingArea">
-                <div id="displayText" class="displayText" aria-live="polite"></div>
-                <input id="hiddenInput" class="hiddenInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-
-                <div class="stats">
-                    <div>WPM: <span id="wpm">0</span></div>
-                    <div>ACC: <span id="acc">100</span></div>
-                    <div>Progress: <span id="progress">0</span></div>
-                </div>
-            </div>
-
-            <div id="results" class="results" style="display:none;"></div>
-        </section>
-
-        <!--Shop Modal-->
-        <div id="shopModal" class="Modal" style="display:none;">
-            <div class="modal-card">
-                <button id="closeShop" class="btn ghost">Close</button>
-                <h2>Shop</h2>
-                <div id="shopGrid" class="shopGrid"></div>
-            </div>
+    <header class="header">
+      <h1 class="logo">TypeToWin</h1>
+      <div class="hud">
+        <div class="coins">
+          <img src="assets/ui/coin.png" alt="coin" style="width:18px;height:18px;margin-right:6px;">
+          <span id="coinCount">0</span> R
         </div>
-    </div>
+        <button id="openShop" class="btn ghost">Shop</button>
+      </div>
+    </header>
 
-    <script type="module" src="js/main.js"></script>
+    <!--Home Screen-->
+    <main id="home" class="view">
+      <h2>Choose Your Hero</h2>
+      <div id="heroList" class="hero-list"></div>
+
+      <div class="controls">
+        <button id="startBtn" class="btn">Start Race</button>
+        <button id="resetBtn" class="btn ghost">Reset Progress</button>
+      </div>
+    </main>
+
+    <!--Race Screen-->
+    <section id="raceView" class="view" style="display:none;">
+      <div id="track" class="track"></div>
+      <div id="go" class="go">GO</div>
+      <div class="typingArea">
+        <div id="displayText" class="displayText" aria-live="polite"></div>
+        <input id="hiddenInput" class="hiddenInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Typing input">
+
+        <div class="stats">
+          <div>WPM: <span id="wpm">0</span></div>
+          <div>ACC: <span id="acc">100</span></div>
+          <div>Progress: <span id="progress">0</span></div>
+        </div>
+      </div>
+
+      <div id="results" class="results" style="display:none;"></div>
+    </section>
+
+    <!--Shop Modal-->
+    <div id="shopModal" class="modal" style="display:none;">
+      <div class="modal-card">
+        <button id="closeShop" class="btn ghost">Close</button>
+        <h2>Shop</h2>
+        <div id="shopGrid" class="shopGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
