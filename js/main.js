@@ -1,5 +1,6 @@
 import { HEROES } from "./heroes.js";
 import { store, save } from "./store.js";
+import { initRaceScene } from "./race.js";
 
 /* DOM ele */
 const heroList = document.getElementById("heroList");
@@ -123,11 +124,24 @@ function renderShop() {
 /* Event bindings */
 if (shopBtn) shopBtn.addEventListener("click", openShop);
 if (closeShopBtn) closeShopBtn.addEventListener("click", closeShopModal);
+
+//Added Start Button Event Listener
+if (startBtn) {
+  startBtn.addEventListener("click", () => {
+    homeView.style.display = "none";
+    raceView.style.display = "block";
+    initRaceScene(() => {
+      // Callback after race finishes
+      renderHUD();
+    });
+  });
+}
+
 if (resetBtn)
   resetBtn.addEventListener("click", () => {
     if (!confirm("Reset progress?")) return;
     store.coins = 0;
-    store.unlocked = [];
+    store.unlocked = ["packo", "beavy"];
     store.selected = HEROES[0]?.id || null;
     save(store);
     renderHUD();
