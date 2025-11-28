@@ -1,11 +1,11 @@
-//for race
+// for race
 import { HEROES } from "./heroes.js";
 import { store, addCoins, save } from "./store.js";
 import { initTypingEngine } from "./typing.js";
 import { launchConfetti } from "./confetti.js";
 import { SFX } from "./sfx.js";
 
-const LANE_COUNT = 5; //1_player + 4_bots
+const LANE_COUNT = 5; // 1_player + 4_bots
 const TRACK_PX = 820;
 
 function laneTop(i, laneH = 72, gap = 18) {
@@ -32,7 +32,7 @@ function coinFly(fromX, fromY, toEl) {
   });
 }
 
-//speed-trail
+// speed trail
 function spawnTrail(trackEl, spr) {
   const t = document.createElement("div");
   t.className = "trail";
@@ -51,11 +51,9 @@ export function initRaceScene(onFinishCb) {
   const goEl = document.getElementById("go");
   const resultsEl = document.getElementById("results");
 
-  //track reset
   trackEl.innerHTML = "";
   resultsEl.style.display = "none";
 
-  //lane 
   for (let i = 0; i < LANE_COUNT; i++) {
     const lane = document.createElement("div");
     lane.className = "lane";
@@ -63,14 +61,12 @@ export function initRaceScene(onFinishCb) {
     trackEl.appendChild(lane);
   }
 
-  //finsh lane
   const finish = document.createElement("div");
   finish.className = "finish";
   finish.style.top = "8px";
   finish.style.bottom = "8px";
   trackEl.appendChild(finish);
 
-  //player + bot
   const players = [];
   for (let i = 0; i < LANE_COUNT; i++) {
     const spr = document.createElement("div");
@@ -104,7 +100,6 @@ export function initRaceScene(onFinishCb) {
     });
   }
 
-  //typing engine
   const texts = [
     "Learning to type quickly improves confidence and productivity.",
     "The quick brown fox jumps over the lazy dog.",
@@ -115,7 +110,9 @@ export function initRaceScene(onFinishCb) {
 
   const { state, start, stop } = initTypingEngine(text, (live) => {
     const player = players[0];
-    const pxPerChar = TRACK_PX / Math.max(60, text.length);
+
+    // ✅ FIXED HERE
+    const pxPerChar = TRACK_PX / text.length;
 
     player.progress = Math.min(
       TRACK_PX,
@@ -125,11 +122,9 @@ export function initRaceScene(onFinishCb) {
     );
   });
 
-  //GO animation
   goEl.classList.add("show");
   setTimeout(() => goEl.classList.remove("show"), 700);
 
-  //start after small delay
   setTimeout(() => {
     start();
     startLoop();
@@ -137,7 +132,6 @@ export function initRaceScene(onFinishCb) {
 
   let last = performance.now();
 
-  //animation loop
   function startLoop() {
     last = performance.now();
     requestAnimationFrame(loop);
@@ -147,15 +141,17 @@ export function initRaceScene(onFinishCb) {
     const dt = (ts - last) / 1000;
     last = ts;
 
-    //updating bots
     for (let i = 1; i < players.length; i++) {
       const p = players[i];
       if (p.finished) continue;
 
       const variation =
         1 + Math.sin(ts / 1000 + i) * 0.05 + Math.random() * 0.02;
+
       const charsPerSec = (p.wpm * 5) / 60;
-      const pxPerChar = TRACK_PX / Math.max(60, text.length);
+
+      // ✅ FIXED HERE TOO
+      const pxPerChar = TRACK_PX / text.length;
 
       p.progress +=
         charsPerSec *
@@ -175,7 +171,6 @@ export function initRaceScene(onFinishCb) {
       )}px)`;
     }
 
-    //update player
     const player = players[0];
     player.spr.style.transform = `translateX(${Math.min(
       player.progress,
@@ -199,13 +194,11 @@ export function initRaceScene(onFinishCb) {
     progEl.textContent =
       Math.round((player.progress / TRACK_PX) * 100) + "%";
 
-    //when player finishes
     if (!player.finished && player.progress >= TRACK_PX) {
       player.finished = true;
       player.finishTime = Date.now();
     }
 
-    // all done? all finished?
     const allDone = players.every((p) => p.finished);
 
     if (allDone) {
@@ -217,7 +210,6 @@ export function initRaceScene(onFinishCb) {
     requestAnimationFrame(loop);
   }
 
-  //finalize race
   function finalize() {
     const elapsed = (Date.now() - (state.startTime || Date.now())) / 1000;
     const grossWPM = Math.round((state.typed / 5) / (elapsed / 60));
@@ -228,9 +220,9 @@ export function initRaceScene(onFinishCb) {
     const sorted = players
       .slice()
       .sort((a, b) => (a.finishTime || 999999) - (b.finishTime || 999999));
+
     const order = sorted.map((p) => p.id);
 
-    //rewars system
     let reward = 20;
     if (order[0] === "you") reward += 50;
     if (acc >= 90) reward += 10;
@@ -238,8 +230,8 @@ export function initRaceScene(onFinishCb) {
     addCoins(reward);
     save(store);
 
-    //effects
     const trackRect = trackEl.getBoundingClientRect();
+
     if (order[0] === "you") {
       launchConfetti(
         trackRect.left + trackRect.width / 2,
@@ -260,18 +252,16 @@ export function initRaceScene(onFinishCb) {
 
     document.getElementById("coinCount").textContent = store.coins;
 
-    //show result
     resultsEl.style.display = "block";
     resultsEl.innerHTML = `
-        <h3>Race Results</h3>
-        <p>WPM: <strong>${grossWPM}</strong></p>
-        <p><strong>Placement</strong><br>${order
-          .map((p, i) => `${i + 1}. ${p === "you" ? "You" : p}`)
-          .join("<br>")}</p>
-        <p>Coins earned: +${reward}</p>
-
-        <button class="btn" id="playAgain">Play Again</button>
-        `;
+      <h3>Race Results</h3>
+      <p>WPM: <strong>${grossWPM}</strong></p>
+      <p><strong>Placement</strong><br>${order
+        .map((p, i) => `${i + 1}. ${p === "you" ? "You" : p}`)
+        .join("<br>")}</p>
+      <p>Coins earned: +${reward}</p>
+      <button class="btn" id="playAgain">Play Again</button>
+    `;
 
     document
       .getElementById("playAgain")

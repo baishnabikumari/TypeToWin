@@ -62,33 +62,38 @@ export function initTypingEngine(text, onUpdate) {
 
       state.typed++;
 
+      let played = false;
+
       if (e.key === expected) {
         state.correct++;
         if (sp) sp.classList.add("correct");
-
-        //correct SFX
         if (SFX.correct) {
-          SFX.correct.currentTime = 0;
           SFX.correct.play();
+          played = true;
         }
       } else {
         state.wrong++;
         if (sp) sp.classList.add("wrong");
-
-        //wrong sfx
         if (SFX.wrong) {
-          SFX.wrong.currentTime = 0;
           SFX.wrong.play();
+          played = true;
         }
       }
 
-      //General typing SFX
-      if (SFX.type) {
-        SFX.type.currentTime = 0;
+      if (!played && SFX.type) {
         SFX.type.play();
       }
 
       state.cursor++;
+
+      // FINISH TRIGGER FIX
+      if (state.cursor === state.text.length) {
+        stop();
+        if (typeof onUpdate === "function") {
+          onUpdate({ ...state, finished: true });
+        }
+        return;
+      }
 
       onUpdate && onUpdate(state);
     }

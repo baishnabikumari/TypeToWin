@@ -302,11 +302,8 @@ body {
 
 /*Confetti for colors when you will win*/
 .confetti {
-  position: fixed;
-  width: 10px;
-  height: 10px;
   border-radius: 3px;
-  pointer-events: none;
+  position: fixed;
   z-index: 9999;
 }
 

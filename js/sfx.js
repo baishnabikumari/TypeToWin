@@ -1,10 +1,16 @@
 // sound manager for all assets/sound/
 
 function makeAudio(path) {
-  const a = new Audio(path);
-  a.preload = "auto";
-  a.volume = 0.7;
-  return a;
+  const base = new Audio(path);
+  base.preload = "auto";
+  base.volume = 0.7;
+  return {
+    play() {
+      const a = base.cloneNode();
+      a.volume = base.volume;
+      a.play();
+    }
+  };
 }
 
 export const SFX = {
@@ -14,3 +20,13 @@ export const SFX = {
   lose: makeAudio("assets/sounds/lose.mp3"),
   type: makeAudio("assets/sounds/type.mp3"),
 };
+
+let unlocked = false;
+function unlockAudio() {
+  if (unlocked) return;
+  Object.values(SFX).forEach(a => a.play());
+  unlocked = true;
+}
+
+window.addEventListener("click", unlockAudio);
+window.addEventListener('keydown', unlockAudio);
