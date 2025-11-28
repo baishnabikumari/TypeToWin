@@ -22,15 +22,26 @@ function renderHUD() {
 function renderHeroes() {
   heroList.innerHTML = "";
 
-  HEROES.forEach((h) => {
-    const d = document.createElement("div");
-    d.className = "hero";
+  //selected hero
+  let centerIndex = HEROES.findIndex(h => h.id === store.selected);
+  if (centerIndex === -1) centerIndex = 0;
 
-    if (store.selected === h.id) d.classList.add("selected");
+  HEROES.forEach((h, i) => {
+  const d = document.createElement("div");
+  d.className = "hero";
+  d.dataset.index = i;
 
-    d.innerHTML = `
-        <img src="${h.img}">
-        <div class="label">${h.name}</div>`;
+  const diff = i - centerIndex;
+  const abs = Math.abs(diff);
+
+  if (diff === 0) d.classList.add("center");
+  else if (abs === 1) d.classList.add("side");
+  else if (abs === 2) d.classList.add("side2");
+  else d.style.opacity = "0.0";
+
+  d.innerHTML = `
+    <img src="${h.img}">
+    <div class="label">${h.name}</div>`;
 
     d.onclick = () => {
       if (!store.unlocked.includes(h.id)) {
@@ -46,6 +57,19 @@ function renderHeroes() {
     };
     heroList.appendChild(d);
   });
+
+  const children = heroList.children;
+  if (children.length > 0 && children[centerIndex]) {
+    const el = children[centerIndex];
+    //smoooth scroool
+    el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest"});
+  }
+
+  const dots = document.querySelectorAll(".carousel-dots .dot");
+  if (dots && dots.length) {
+    const page = Math.floor(centerIndex / Math.max(1, Math.ceil(HEROES.length / dots.length)));
+    dots.forEach((dot, idx) => dot.classList.toggle("active", idx === page));
+  }
 }
 
 // making shop functional
@@ -114,3 +138,33 @@ if (resetBtn)
 /* Initial render */
 renderHUD();
 renderHeroes();
+
+const prevBtn = document.getElementById("prevHero");
+const nextBtn = document.getElementById("nextHero");
+const dotsContainer = document.querySelector(".carousel-dots");
+
+function moveCenter(delta) {
+  const currentIndex = HEROES.findIndex(h => h.id === store.selected);
+  let nextIndex = (currentIndex + delta + HEROES.length) % HEROES.length;
+  store.selected = HEROES[nextIndex].id;
+  save(store);
+  renderHeroes();
+  renderHUD();
+}
+
+if (prevBtn) prevBtn.addEventListener("click", () => moveCenter(-1));
+if (nextBtn) nextBtn.addEventListener("click", () => moveCenter(1));
+
+if (dotsContainer) {
+  const dots = Array.from(dotsContainer.querySelectorAll(".dot"));
+  dots.forEach((dot, idx) => {
+    dot.addEventListener("click", () => {
+      const chunk = Math.max(1, Math.ceil(HEROES.length / dots.length));
+      const target = Math.min(HEROES.length - 1, idx * chunk);
+      store.selected = HEROES[target].id;
+      save(store);
+      renderHeroes();
+      renderHUD();
+    });
+  });
+}

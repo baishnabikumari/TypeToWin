@@ -26,8 +26,15 @@ export function initTypingEngine(text, onUpdate) {
   input.value = "";
   input.focus();
 
+  let listenerBound = false;
+
   function handleKey(e) {
     if (!state.running) return;
+
+    if (state.cursor >= state.text.length) {
+      stop();
+      return;
+    }
 
     //Backspace
     if (e.key === "Backspace") {
@@ -35,8 +42,11 @@ export function initTypingEngine(text, onUpdate) {
       if (state.cursor > 0) {
         state.cursor--;
         const sp = displayEl.querySelector(`span[data-index="${state.cursor}"]`);
-        if (sp) sp.classList.remove("correct", "wrong");
 
+        if (sp?.classList.contains("correct")) state.correct--;
+        if (sp?.classList.contains("wrong")) state.wrong--;
+
+        sp.classList.remove("correct", "wrong");
         state.typed = Math.max(0, state.typed - 1);
       }
       onUpdate && onUpdate(state);
@@ -85,14 +95,17 @@ export function initTypingEngine(text, onUpdate) {
   }
 
   function start() {
+    if (listenerBound) return;
     state.running = true;
     state.startTime = Date.now();
     window.addEventListener("keydown", handleKey);
+    listenerBound = true;
   }
 
   function stop() {
     state.running = false;
     window.removeEventListener("keydown", handleKey);
+    listenerBound = false;
   }
 
   input.addEventListener("paste", (e) => e.preventDefault());
