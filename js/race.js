@@ -6,9 +6,9 @@ import { launchConfetti } from "./confetti.js";
 import { SFX } from "./sfx.js";
 
 const LANE_COUNT = 5; // 1_player + 4_bots
-const TRACK_PX = 820;
+const TRACK_PX = 2400; // now 2400 track width for better visibility
 
-function laneTop(i, laneH = 72, gap = 18) {
+function laneTop(i, laneH = 72, gap = 30) {
   return 12 + i * (laneH + gap);
 }
 
@@ -37,7 +37,7 @@ function spawnTrail(trackEl, spr) {
   const t = document.createElement("div");
   t.className = "trail";
   t.style.left = spr.offsetLeft + "px";
-  t.style.top = spr.offsetTop + 50 + "px";
+  t.style.top = spr.offsetTop + 36 + "px";
 
   trackEl.appendChild(t);
   setTimeout(() => {
@@ -63,15 +63,13 @@ export function initRaceScene(onFinishCb) {
 
   const finish = document.createElement("div");
   finish.className = "finish";
-  finish.style.top = "8px";
-  finish.style.bottom = "8px";
   trackEl.appendChild(finish);
 
   const players = [];
   for (let i = 0; i < LANE_COUNT; i++) {
     const spr = document.createElement("div");
     spr.className = "sprite";
-    spr.style.top = laneTop(i) - 8 + "px";
+    spr.style.top = laneTop(i) + "px";
 
     const hero =
       i === 0
@@ -96,14 +94,16 @@ export function initRaceScene(onFinishCb) {
       progress: 0,
       finished: false,
       finishTime: null,
-      wpm: i === 0 ? 0 : 35 + i * 6 + (Math.random() * 8 - 4),
+      wpm: i === 0 ? 0 : 30 + i * 5 + (Math.random() * 6 - 3),
     });
   }
 
   const texts = [
-    "Learning to type quickly improves confidence and productivity.",
-    "The quick brown fox jumps over the lazy dog.",
-    "Practice daily for short sessions and you will improve steadily."
+    "Typing skills are an art that can be mastered as one gains more time and practice in the craft of learning to type fast and correctly. The more you keep typing the more your fingers will automatically know the keyboard arrangement and you do not really need to spend much time searching where your keys are located but rather communicate effectively and succinctly what you want to say. It is important to remember that being accurate is always better than being fast because developing good habits in the early years will not make you fall into the pit of errors.",
+    "The ability to type well has turned out to be a key to success in nearly all professions in the digital era. It can be the speed at which you type without glancing at the keyboard which can whole heartedly enhance effectiveness and minimize frustrating situations whether you are sending email, writing documents, coding programs or just chatting with your friends on the internet. Begin with the mastery of home row keys then slowly learn to use all the letters, numbers and special characters.",
+    "The proper typing posture and the placement of the fingers are underestimated by many people. Seating straight, avoiding using a footstool and keeping your wrists slightly raised can help avoid strain and fatigue in a protracted typing session. Your fingers must be automatically on the home row keys with index fingers on F and J keys which are normally raised a small bump to make you find them without necessarily looking.",
+    "The most effective way that you enhance your typing speed is by undertaking a calculated practice by using a collection of exercises and the true world typing cases. Attempt to type quotes of your favorite books, write down podcasts or even a journal entry about your day. The more varied your practice material the more you will be ready to encounter any typing task that will arise either in school, work or in your own projects.",
+    "Touch typing is typing without having to look at the keyboard and instead having muscle memory and spatial awareness. It might be clumsy and slow initially but once the first learning curve is gotten over it will definitely reward the effort with tremendous returns in the long run. Practice enables most professional typists to work at sixty to eighty words per minute and even faster with some rare individuals working at over a hundred words per minute with almost perfect accuracy."
   ];
 
   const text = texts[Math.floor(Math.random() * texts.length)];
@@ -111,7 +111,6 @@ export function initRaceScene(onFinishCb) {
   const { state, start, stop } = initTypingEngine(text, (live) => {
     const player = players[0];
 
-    // ✅ FIXED HERE
     const pxPerChar = TRACK_PX / text.length;
 
     player.progress = Math.min(
@@ -150,7 +149,6 @@ export function initRaceScene(onFinishCb) {
 
       const charsPerSec = (p.wpm * 5) / 60;
 
-      // ✅ FIXED HERE TOO
       const pxPerChar = TRACK_PX / text.length;
 
       p.progress +=
@@ -177,7 +175,9 @@ export function initRaceScene(onFinishCb) {
       TRACK_PX
     )}px)`;
 
-    spawnTrail(trackEl, player.spr);
+    if (Math.random() < 0.3) {
+      spawnTrail(trackEl, player.spr);
+    }
 
     const wpmEl = document.getElementById("wpm");
     const accEl = document.getElementById("acc");
@@ -255,12 +255,12 @@ export function initRaceScene(onFinishCb) {
     resultsEl.style.display = "block";
     resultsEl.innerHTML = `
       <h3>Race Results</h3>
-      <p>WPM: <strong>${grossWPM}</strong></p>
-      <p><strong>Placement</strong><br>${order
-        .map((p, i) => `${i + 1}. ${p === "you" ? "You" : p}`)
+      <p>WPM: <strong>${grossWPM}</strong> | Accuracy: <strong>${acc}%</strong></p>
+      <p><strong>Final Standings</strong><br>${order
+        .map((p, i) => `${i + 1}. ${p === "you" ? "🏆 You" : p}`)
         .join("<br>")}</p>
-      <p>Coins earned: +${reward}</p>
-      <button class="btn" id="playAgain">Play Again</button>
+      <p style="color: #2ecc71; font-size: 18px; font-weight: 700;">Coins earned: +${reward} 🪙</p>
+      <button class="btn primary" id="playAgain">Play Again</button>
     `;
 
     document

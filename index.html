@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>TypeToWin</title>
-  <!--<link rel="stylesheet" href="css/style.css">-->
+  <!-- Only using ui-upgrade.css for consistent styling -->
   <link rel="stylesheet" href="css/ui-upgrade.css">
 </head>
 <body>
@@ -18,7 +18,8 @@
 
       <div class="hud">
         <div class="coins">
-          <img src="assets/ui/coin.png" alt="coin">
+          <!--Emoji instead of missing coin.png -->
+          <span style="font-size: 18px;">🪙</span>
           <span id="coinCount">0</span>
         </div>
         <button id="openShop" class="shop-pill">Shop</button>
@@ -53,6 +54,10 @@
 
     <!--Race Screen-->
     <section id="raceView" class="view" style="display:none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 style="margin: 0; color: white; font-size: 24px;">🏁 Race in Progress</h2>
+        <button id="quitRace" class="btn ghost" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">← Back to Home</button>
+      </div>
       <div id="track" class="track"></div>
       <div id="go" class="go">GO</div>
       <div class="typingArea">
@@ -61,8 +66,8 @@
 
         <div class="stats">
           <div>WPM: <span id="wpm">0</span></div>
-          <div>ACC: <span id="acc">100</span></div>
-          <div>Progress: <span id="progress">0</span></div>
+          <div>ACC: <span id="acc">100%</span></div>
+          <div>Progress: <span id="progress">0%</span></div>
         </div>
       </div>
 
@@ -80,6 +85,5 @@
   </div>
 
   <script type="module" src="js/main.js"></script>
-  <script type="module" src="js/heroes.js"></script>
 </body>
 </html>

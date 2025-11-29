@@ -13,6 +13,7 @@ const closeShopBtn = document.getElementById("closeShop");
 const homeView = document.getElementById("home");
 const raceView = document.getElementById("raceView");
 const resetBtn = document.getElementById("resetBtn");
+const quitRaceBtn = document.getElementById("quitRace");
 
 /* render hud */
 function renderHUD() {
@@ -125,7 +126,16 @@ function renderShop() {
 if (shopBtn) shopBtn.addEventListener("click", openShop);
 if (closeShopBtn) closeShopBtn.addEventListener("click", closeShopModal);
 
-//Added Start Button Event Listener
+// ✅ Quit Race Button - Go back to home
+if (quitRaceBtn) {
+  quitRaceBtn.addEventListener("click", () => {
+    if (confirm("Are you sure you want to quit the race? Progress will be lost.")) {
+      location.reload(); // Reload to reset everything
+    }
+  });
+}
+
+// ✅ FIXED: Added Start Button Event Listener
 if (startBtn) {
   startBtn.addEventListener("click", () => {
     homeView.style.display = "none";
