@@ -6,10 +6,10 @@ import { launchConfetti } from "./confetti.js";
 import { SFX } from "./sfx.js";
 
 const LANE_COUNT = 5; // 1_player + 4_bots
-const TRACK_PX = 2400; // now 2400 track width for better visibility
+const TRACK_PX = 3000; // Long track for ~1 minute gameplay
 
-function laneTop(i, laneH = 72, gap = 30) {
-  return 12 + i * (laneH + gap);
+function laneTop(i, laneH = 72, gap = 32) {
+  return 16 + i * (laneH + gap);
 }
 
 // coins fly animation
@@ -33,13 +33,13 @@ function coinFly(fromX, fromY, toEl) {
 }
 
 // speed trail
-function spawnTrail(trackEl, spr) {
+function spawnTrail(container, spr) {
   const t = document.createElement("div");
   t.className = "trail";
   t.style.left = spr.offsetLeft + "px";
   t.style.top = spr.offsetTop + 36 + "px";
 
-  trackEl.appendChild(t);
+  container.appendChild(t);
   setTimeout(() => {
     t.style.opacity = "0";
     setTimeout(() => t.remove(), 250);
@@ -53,17 +53,26 @@ export function initRaceScene(onFinishCb) {
 
   trackEl.innerHTML = "";
   resultsEl.style.display = "none";
+  
+  // Create a race container that's wide enough for the full track
+  const raceContainer = document.createElement("div");
+  raceContainer.style.position = "relative";
+  raceContainer.style.width = (TRACK_PX + 100) + "px";
+  raceContainer.style.height = "100%";
+  trackEl.appendChild(raceContainer);
 
   for (let i = 0; i < LANE_COUNT; i++) {
     const lane = document.createElement("div");
     lane.className = "lane";
     lane.style.top = laneTop(i) + "px";
-    trackEl.appendChild(lane);
+    lane.style.width = TRACK_PX + "px";
+    raceContainer.appendChild(lane);
   }
 
   const finish = document.createElement("div");
   finish.className = "finish";
-  trackEl.appendChild(finish);
+  finish.style.left = (TRACK_PX - 10) + "px";
+  raceContainer.appendChild(finish);
 
   const players = [];
   for (let i = 0; i < LANE_COUNT; i++) {
@@ -83,9 +92,10 @@ export function initRaceScene(onFinishCb) {
     const badge = document.createElement("div");
     badge.className = "badge";
     badge.textContent = i === 0 ? "You" : "Bot" + i;
+    badge.setAttribute("data-position", i + 1);
     spr.appendChild(badge);
 
-    trackEl.appendChild(spr);
+    raceContainer.appendChild(spr);
 
     players.push({
       id: i === 0 ? "you" : "bot" + i,
@@ -108,6 +118,8 @@ export function initRaceScene(onFinishCb) {
 
   const text = texts[Math.floor(Math.random() * texts.length)];
 
+  let typingEngine;
+  
   const { state, start, stop } = initTypingEngine(text, (live) => {
     const player = players[0];
 
@@ -119,7 +131,15 @@ export function initRaceScene(onFinishCb) {
         pxPerChar *
         (HEROES.find((h) => h.id === player.heroId)?.speed || 1)
     );
+    
+    // Update player finished status based on typing completion
+    if (live.correct >= text.length && !player.finished) {
+      player.finished = true;
+      player.finishTime = Date.now();
+    }
   });
+  
+  typingEngine = { state, start, stop };
 
   goEl.classList.add("show");
   setTimeout(() => goEl.classList.remove("show"), 700);
@@ -130,13 +150,17 @@ export function initRaceScene(onFinishCb) {
   }, 900);
 
   let last = performance.now();
+  let raceStarted = false;
 
   function startLoop() {
     last = performance.now();
+    raceStarted = true;
     requestAnimationFrame(loop);
   }
 
   function loop(ts) {
+    if (!raceStarted) return;
+    
     const dt = (ts - last) / 1000;
     last = ts;
 
@@ -174,9 +198,14 @@ export function initRaceScene(onFinishCb) {
       player.progress,
       TRACK_PX
     )}px)`;
+    //Scroll track to follow the player
+    const trackWidth = trackEl.offsetWidth;
+    const cameraOffset = trackWidth / 2 - 100; // Keep player a bit left of center
+    const scrollX = Math.max(0, player.progress - cameraOffset);
+    trackEl.scrollLeft = scrollX;
 
     if (Math.random() < 0.3) {
-      spawnTrail(trackEl, player.spr);
+      spawnTrail(raceContainer, player.spr);
     }
 
     const wpmEl = document.getElementById("wpm");
@@ -184,7 +213,7 @@ export function initRaceScene(onFinishCb) {
     const progEl = document.getElementById("progress");
 
     const elapsed = (Date.now() - (state.startTime || Date.now())) / 1000;
-    const grossWPM = Math.round((state.typed / 5) / (elapsed / 60));
+    const grossWPM = elapsed > 0 ? Math.round((state.typed / 5) / (elapsed / 60)) : 0;
     const acc = state.typed
       ? Math.round((state.correct / state.typed) * 100)
       : 100;
@@ -194,14 +223,27 @@ export function initRaceScene(onFinishCb) {
     progEl.textContent =
       Math.round((player.progress / TRACK_PX) * 100) + "%";
 
-    if (!player.finished && player.progress >= TRACK_PX) {
+    // Player finishes when they complete the text
+    if (state.correct >= text.length && !player.finished) {
       player.finished = true;
       player.finishTime = Date.now();
     }
 
     const allDone = players.every((p) => p.finished);
+    
+    // Check if all bots finished but player hasn't (Game Over - You Lose)
+    const allBotsFinished = players.slice(1).every((p) => p.finished);
+    const playerNotFinished = !player.finished;
+    
+    if (allBotsFinished && playerNotFinished) {
+      raceStarted = false;
+      stop();
+      finalize();
+      return;
+    }
 
     if (allDone) {
+      raceStarted = false;
       stop();
       finalize();
       return;
@@ -212,27 +254,70 @@ export function initRaceScene(onFinishCb) {
 
   function finalize() {
     const elapsed = (Date.now() - (state.startTime || Date.now())) / 1000;
-    const grossWPM = Math.round((state.typed / 5) / (elapsed / 60));
-    const acc = state.typed
+    const grossWPM = elapsed > 0 ? Math.round((state.typed / 5) / (elapsed / 60)) : 0;
+    const acc = state.typed > 0
       ? Math.round((state.correct / state.typed) * 100)
       : 0;
 
     const sorted = players
       .slice()
-      .sort((a, b) => (a.finishTime || 999999) - (b.finishTime || 999999));
+      .sort((a, b) => {
+        // If someone didn't finish, put them at the end
+        if (!a.finished && !b.finished) return 0;
+        if (!a.finished) return 1;
+        if (!b.finished) return -1;
+        return a.finishTime - b.finishTime;
+      });
 
     const order = sorted.map((p) => p.id);
 
-    let reward = 20;
-    if (order[0] === "you") reward += 50;
-    if (acc >= 90) reward += 10;
+    // Check if player finished or lost
+    const playerFinished = order.indexOf("you");
+    const youWon = order[0] === "you" && players[0].finished;
+    const youLost = !players[0].finished;
+
+    let reward = 0;
+    let baseReward = 0;
+    let bonusReward = 0;
+    
+    if (youWon) {
+      baseReward = 1000;
+      bonusReward = 500;
+    } else if (players[0].finished) {
+      // Finished but not first
+      if (playerFinished === 1 || playerFinished === 2) {
+        // 2nd or 3rd place
+        baseReward = 800;
+        bonusReward = 300;
+      } else if (playerFinished === 3 || playerFinished === 4) {
+        // 4th or 5th place
+        baseReward = 700;
+        bonusReward = 200;
+      } else {
+        // Beyond 5th place
+        baseReward = 500;
+        bonusReward = 100;
+      }
+    } else {
+      // Didn't finish - minimal reward
+      baseReward = 100;
+      bonusReward = 0;
+    }
+    
+    reward = baseReward + bonusReward;
+    
+    // Accuracy bonus (additional on top)
+    if (acc >= 90 && players[0].finished) {
+      bonusReward += 100;
+      reward += 100;
+    }
 
     addCoins(reward);
     save(store);
 
     const trackRect = trackEl.getBoundingClientRect();
 
-    if (order[0] === "you") {
+    if (youWon) {
       launchConfetti(
         trackRect.left + trackRect.width / 2,
         trackRect.top + 40
@@ -253,20 +338,95 @@ export function initRaceScene(onFinishCb) {
     document.getElementById("coinCount").textContent = store.coins;
 
     resultsEl.style.display = "block";
+    
+    // Different messages based on result
+    let resultMessage = "";
+    let rewardBreakdown = "";
+    
+    if (youWon) {
+      resultMessage = `<h3 style="color: #2ecc71;">🏆 Victory! You Won!</h3>`;
+      rewardBreakdown = `
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 12px; border-radius: 8px; margin: 10px 0;">
+          <p style="margin: 5px 0;">💰 Base Reward: <strong>1000 🪙</strong></p>
+          <p style="margin: 5px 0;">🎁 Win Bonus: <strong>+500 🪙</strong></p>
+          ${acc >= 90 ? '<p style="margin: 5px 0;">✨ Accuracy Bonus (90%+): <strong>+100 🪙</strong></p>' : ''}
+        </div>
+      `;
+    } else if (youLost) {
+      resultMessage = `<h3 style="color: #e74c3c;">💔 Game Over - You Lose!</h3>
+        <p style="color: #e74c3c;">All bots finished before you completed the text.</p>`;
+      rewardBreakdown = `
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 12px; border-radius: 8px; margin: 10px 0;">
+          <p style="margin: 5px 0;">💰 Participation: <strong>100 🪙</strong></p>
+        </div>
+      `;
+    } else if (playerFinished === 1 || playerFinished === 2) {
+      resultMessage = `<h3 style="color: #f39c12;">${playerFinished === 1 ? '🥈' : '🥉'} ${playerFinished + 1}${getOrdinalSuffix(playerFinished + 1)} Place - Well Done!</h3>`;
+      rewardBreakdown = `
+        <div style="background: rgba(243, 156, 18, 0.1); padding: 12px; border-radius: 8px; margin: 10px 0;">
+          <p style="margin: 5px 0;">💰 Base Reward: <strong>800 🪙</strong></p>
+          <p style="margin: 5px 0;">🎁 Placement Bonus: <strong>+300 🪙</strong></p>
+          ${acc >= 90 ? '<p style="margin: 5px 0;">✨ Accuracy Bonus (90%+): <strong>+100 🪙</strong></p>' : ''}
+        </div>
+      `;
+    } else if (playerFinished === 3 || playerFinished === 4) {
+      resultMessage = `<h3 style="color: #3498db;">📊 ${playerFinished + 1}${getOrdinalSuffix(playerFinished + 1)} Place</h3>`;
+      rewardBreakdown = `
+        <div style="background: rgba(52, 152, 219, 0.1); padding: 12px; border-radius: 8px; margin: 10px 0;">
+          <p style="margin: 5px 0;">💰 Base Reward: <strong>700 🪙</strong></p>
+          <p style="margin: 5px 0;">🎁 Placement Bonus: <strong>+200 🪙</strong></p>
+          ${acc >= 90 ? '<p style="margin: 5px 0;">✨ Accuracy Bonus (90%+): <strong>+100 🪙</strong></p>' : ''}
+        </div>
+      `;
+    } else {
+      resultMessage = `<h3 style="color: #95a5a6;">📊 ${playerFinished + 1}${getOrdinalSuffix(playerFinished + 1)} Place</h3>`;
+      rewardBreakdown = `
+        <div style="background: rgba(149, 165, 166, 0.1); padding: 12px; border-radius: 8px; margin: 10px 0;">
+          <p style="margin: 5px 0;">💰 Base Reward: <strong>500 🪙</strong></p>
+          <p style="margin: 5px 0;">🎁 Completion Bonus: <strong>+100 🪙</strong></p>
+          ${acc >= 90 ? '<p style="margin: 5px 0;">✨ Accuracy Bonus (90%+): <strong>+100 🪙</strong></p>' : ''}
+        </div>
+      `;
+    }
+    
     resultsEl.innerHTML = `
-      <h3>Race Results</h3>
+      ${resultMessage}
       <p>WPM: <strong>${grossWPM}</strong> | Accuracy: <strong>${acc}%</strong></p>
       <p><strong>Final Standings</strong><br>${order
-        .map((p, i) => `${i + 1}. ${p === "you" ? "🏆 You" : p}`)
+        .map((p, i) => {
+          const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`;
+          const isYou = p === "you";
+          const finishedText = isYou && !players[0].finished ? " (DNF)" : "";
+          return `${medal} ${isYou ? "<strong>You</strong>" : p}${finishedText}`;
+        })
         .join("<br>")}</p>
-      <p style="color: #2ecc71; font-size: 18px; font-weight: 700;">Coins earned: +${reward} 🪙</p>
-      <button class="btn primary" id="playAgain">Play Again</button>
+      ${rewardBreakdown}
+      <p style="color: #2ecc71; font-size: 22px; font-weight: 700; margin-top: 10px;">Total Coins: +${reward} 🪙</p>
+      <button class="btn primary" id="playAgain">🔄 Play Again</button>
+      <button class="btn ghost" id="backHome" style="margin-left: 10px;">🏠 Back to Home</button>
     `;
 
     document
       .getElementById("playAgain")
       .addEventListener("click", () => location.reload());
+      
+    document
+      .getElementById("backHome")
+      .addEventListener("click", () => {
+        document.getElementById("raceView").style.display = "none";
+        document.getElementById("home").style.display = "block";
+      });
 
     onFinishCb && onFinishCb({ wpm: grossWPM, acc, order, reward });
+  }
+  
+  // Helper function for ordinal numbers (1st, 2nd, 3rd, etc.)
+  function getOrdinalSuffix(num) {
+    const j = num % 10;
+    const k = num % 100;
+    if (j === 1 && k !== 11) return "st";
+    if (j === 2 && k !== 12) return "nd";
+    if (j === 3 && k !== 13) return "rd";
+    return "th";
   }
 }

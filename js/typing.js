@@ -2,7 +2,9 @@ import { SFX } from "./sfx.js";
 
 export function initTypingEngine(text, onUpdate) {
   const displayEl = document.getElementById("displayText");
+  const displayInner = document.getElementById("displayTextInner");
   const input = document.getElementById("hiddenInput");
+  const progressBar = document.getElementById("typingProgressBar");
 
   let state = {
     text,
@@ -15,13 +17,13 @@ export function initTypingEngine(text, onUpdate) {
   };
 
   //Building text spans
-  displayEl.innerHTML = "";
+  displayInner.innerHTML = "";
   for (let i = 0; i < text.length; i++) {
     const sp = document.createElement("span");
     sp.dataset.index = i;
     sp.textContent = text[i];
     sp.style.position = "relative";
-    displayEl.appendChild(sp);
+    displayInner.appendChild(sp);
   }
 
   // Add cursor indicator
@@ -29,9 +31,9 @@ export function initTypingEngine(text, onUpdate) {
   cursorEl.id = "typingCursor";
   cursorEl.style.cssText = `
     display: inline-block;
-    width: 2px;
-    height: 1.2em;
-    background: #2ecc71;
+    width: 3px;
+    height: 1.3em;
+    background: #4caf50;
     margin-left: 2px;
     animation: blink 1s infinite;
     vertical-align: text-bottom;
@@ -45,10 +47,11 @@ export function initTypingEngine(text, onUpdate) {
       50%, 100% { opacity: 0; }
     }
     .current-char {
-      background: rgba(43, 124, 255, 0.15) !important;
-      border-radius: 3px;
-      padding: 2px 4px;
-      margin: 0 1px;
+      background: rgba(76, 175, 80, 0.2) !important;
+      border-radius: 4px;
+      padding: 4px 6px !important;
+      margin: 0 2px;
+      border-bottom: 3px solid #4caf50;
     }
   `;
   document.head.appendChild(style);
@@ -60,16 +63,16 @@ export function initTypingEngine(text, onUpdate) {
 
   function updateCursor() {
     // Remove old cursor
-    const oldCursor = displayEl.querySelector("#typingCursor");
+    const oldCursor = displayInner.querySelector("#typingCursor");
     if (oldCursor) oldCursor.remove();
 
     // Remove old current-char highlight
-    displayEl.querySelectorAll(".current-char").forEach(el => {
+    displayInner.querySelectorAll(".current-char").forEach(el => {
       el.classList.remove("current-char");
     });
 
     if (state.cursor < state.text.length) {
-      const currentSpan = displayEl.querySelector(`span[data-index="${state.cursor}"]`);
+      const currentSpan = displayInner.querySelector(`span[data-index="${state.cursor}"]`);
       if (currentSpan) {
         // Highlight current character
         currentSpan.classList.add("current-char");
@@ -77,19 +80,20 @@ export function initTypingEngine(text, onUpdate) {
         // Insert cursor after current span
         currentSpan.insertAdjacentElement("afterend", cursorEl);
         
-        // Auto-scroll to keep current position visible
-        const displayRect = displayEl.getBoundingClientRect();
-        const spanRect = currentSpan.getBoundingClientRect();
+        const containerWidth = displayEl.offsetWidth;
+        const spanOffsetLeft = currentSpan.offsetLeft;
+        const centerOffset = containerWidth / 2;
         
-        // Scroll if current character is near the bottom
-        if (spanRect.bottom > displayRect.bottom - 40) {
-          currentSpan.scrollIntoView({ 
-            behavior: "smooth", 
-            block: "center",
-            inline: "nearest"
-          });
-        }
+        // Calculate transform to center current character
+        const translateX = centerOffset - spanOffsetLeft - (currentSpan.offsetWidth / 2);
+        displayInner.style.transform = `translateX(${Math.min(0, translateX)}px)`;
       }
+    }
+    
+    // Update progress bar
+    const progress = (state.cursor / state.text.length) * 100;
+    if (progressBar) {
+      progressBar.style.width = progress + "%";
     }
   }
 
@@ -109,7 +113,7 @@ export function initTypingEngine(text, onUpdate) {
       e.preventDefault();
       if (state.cursor > 0) {
         state.cursor--;
-        const sp = displayEl.querySelector(`span[data-index="${state.cursor}"]`);
+        const sp = displayInner.querySelector(`span[data-index="${state.cursor}"]`);
 
         if (sp?.classList.contains("correct")) state.correct--;
         if (sp?.classList.contains("wrong")) state.wrong--;
@@ -127,7 +131,7 @@ export function initTypingEngine(text, onUpdate) {
       e.preventDefault();
 
       const expected = state.text[state.cursor] || "";
-      const sp = displayEl.querySelector(`span[data-index="${state.cursor}"]`);
+      const sp = displayInner.querySelector(`span[data-index="${state.cursor}"]`);
 
       state.typed++;
 
@@ -184,10 +188,10 @@ export function initTypingEngine(text, onUpdate) {
     listenerBound = false;
     
     // Remove cursor when finished
-    const cursor = displayEl.querySelector("#typingCursor");
+    const cursor = displayInner.querySelector("#typingCursor");
     if (cursor) cursor.remove();
     
-    displayEl.querySelectorAll(".current-char").forEach(el => {
+    displayInner.querySelectorAll(".current-char").forEach(el => {
       el.classList.remove("current-char");
     });
   }

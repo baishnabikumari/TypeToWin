@@ -61,13 +61,21 @@
       <div id="track" class="track"></div>
       <div id="go" class="go">GO</div>
       <div class="typingArea">
-        <div id="displayText" class="displayText" aria-live="polite"></div>
-        <input id="hiddenInput" class="hiddenInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Typing input">
+        <div class="typing-container">
+          <div id="displayText" class="displayText">
+            <div id="displayTextInner" class="displayText-inner"></div>
+          </div>
+          <input id="hiddenInput" class="hiddenInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Typing input">
 
-        <div class="stats">
-          <div>WPM: <span id="wpm">0</span></div>
-          <div>ACC: <span id="acc">100%</span></div>
-          <div>Progress: <span id="progress">0%</span></div>
+          <div class="stats">
+            <div>WPM: <span id="wpm">0</span></div>
+            <div>ACC: <span id="acc">100%</span></div>
+            <div>Progress: <span id="progress">0%</span></div>
+          </div>
+        </div>
+        
+        <div class="typing-progress">
+          <div id="typingProgressBar" class="typing-progress-bar" style="width: 0%"></div>
         </div>
       </div>
 
@@ -77,8 +85,20 @@
     <!--Shop Modal-->
     <div id="shopModal" class="modal" style="display:none;">
       <div class="modal-card">
-        <button id="closeShop" class="btn ghost">Close</button>
-        <h2>Shop</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="margin: 0; color: #4f46e5; font-size: 28px;">🛍️ Shop</h2>
+          <button id="closeShop" class="btn" style="
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          ">✕ Close</button>
+        </div>
         <div id="shopGrid" class="shopGrid"></div>
       </div>
     </div>
