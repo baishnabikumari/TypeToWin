@@ -6,10 +6,10 @@ import { launchConfetti } from "./confetti.js";
 import { SFX } from "./sfx.js";
 
 const LANE_COUNT = 5; // 1_player + 4_bots
-const TRACK_PX = 3000; // Long track for ~1 minute gameplay
+const TRACK_PX = 800; // Simplified track width - no scroll button needed now.
 
-function laneTop(i, laneH = 72, gap = 32) {
-  return 16 + i * (laneH + gap);
+function laneTop(i, laneH = 85, gap = 18) {
+  return 30 + i * (laneH + gap);
 }
 
 // coins fly animation
@@ -33,13 +33,14 @@ function coinFly(fromX, fromY, toEl) {
 }
 
 // speed trail
-function spawnTrail(container, spr) {
+function spawnTrail(trackEl, spr) {
   const t = document.createElement("div");
   t.className = "trail";
-  t.style.left = spr.offsetLeft + "px";
-  t.style.top = spr.offsetTop + 36 + "px";
+  const sprLeft = parseInt(spr.style.left) || 165;
+  t.style.left = (sprLeft - 10) + "px";
+  t.style.top = spr.style.top;
 
-  container.appendChild(t);
+  trackEl.appendChild(t);
   setTimeout(() => {
     t.style.opacity = "0";
     setTimeout(() => t.remove(), 250);
@@ -53,49 +54,53 @@ export function initRaceScene(onFinishCb) {
 
   trackEl.innerHTML = "";
   resultsEl.style.display = "none";
-  
-  // Create a race container that's wide enough for the full track
-  const raceContainer = document.createElement("div");
-  raceContainer.style.position = "relative";
-  raceContainer.style.width = (TRACK_PX + 100) + "px";
-  raceContainer.style.height = "100%";
-  trackEl.appendChild(raceContainer);
 
+  // Create lanes
   for (let i = 0; i < LANE_COUNT; i++) {
     const lane = document.createElement("div");
     lane.className = "lane";
     lane.style.top = laneTop(i) + "px";
-    lane.style.width = TRACK_PX + "px";
-    raceContainer.appendChild(lane);
+    trackEl.appendChild(lane);
   }
 
+  // Create finish line
   const finish = document.createElement("div");
   finish.className = "finish";
-  finish.style.left = (TRACK_PX - 10) + "px";
-  raceContainer.appendChild(finish);
+  trackEl.appendChild(finish);
 
+  // Create racers
   const players = [];
   for (let i = 0; i < LANE_COUNT; i++) {
+    // Determine hero
+    let hero;
+    let isPlayer = (i === 0);
+    
+    if (isPlayer) {
+      hero = HEROES.find((h) => h.id === store.selected) || HEROES[0];
+    } else {
+      // Use different heroes for bots, cycling through available heroes
+      hero = HEROES[i % HEROES.length];
+    }
+
+    // Create sprite
     const spr = document.createElement("div");
     spr.className = "sprite";
     spr.style.top = laneTop(i) + "px";
 
-    const hero =
-      i === 0
-        ? HEROES.find((h) => h.id === store.selected)
-        : HEROES[i % HEROES.length];
-
     const img = document.createElement("img");
     img.src = hero.img;
+    img.alt = hero.name;
     spr.appendChild(img);
 
+    // Create badge
     const badge = document.createElement("div");
     badge.className = "badge";
-    badge.textContent = i === 0 ? "You" : "Bot" + i;
+    badge.textContent = isPlayer ? "You" : `Bot${i}`;
     badge.setAttribute("data-position", i + 1);
-    spr.appendChild(badge);
-
-    raceContainer.appendChild(spr);
+    badge.style.top = laneTop(i) + 28 + "px";
+    
+    trackEl.appendChild(badge);
+    trackEl.appendChild(spr);
 
     players.push({
       id: i === 0 ? "you" : "bot" + i,
@@ -187,25 +192,14 @@ export function initRaceScene(onFinishCb) {
         p.finishTime = Date.now();
       }
 
-      p.spr.style.transform = `translateX(${Math.min(
-        p.progress,
-        TRACK_PX
-      )}px)`;
+      p.spr.style.left = (165 + Math.min(p.progress, TRACK_PX)) + "px";
     }
 
     const player = players[0];
-    player.spr.style.transform = `translateX(${Math.min(
-      player.progress,
-      TRACK_PX
-    )}px)`;
-    //Scroll track to follow the player
-    const trackWidth = trackEl.offsetWidth;
-    const cameraOffset = trackWidth / 2 - 100; // Keep player a bit left of center
-    const scrollX = Math.max(0, player.progress - cameraOffset);
-    trackEl.scrollLeft = scrollX;
+    player.spr.style.left = (165 + Math.min(player.progress, TRACK_PX)) + "px";
 
     if (Math.random() < 0.3) {
-      spawnTrail(raceContainer, player.spr);
+      spawnTrail(trackEl, player.spr);
     }
 
     const wpmEl = document.getElementById("wpm");

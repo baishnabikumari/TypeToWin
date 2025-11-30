@@ -46,12 +46,26 @@ export function initTypingEngine(text, onUpdate) {
       0%, 49% { opacity: 1; }
       50%, 100% { opacity: 0; }
     }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
     .current-char {
       background: rgba(76, 175, 80, 0.2) !important;
       border-radius: 4px;
       padding: 4px 6px !important;
       margin: 0 2px;
       border-bottom: 3px solid #4caf50;
+    }
+    .wrong {
+      background: rgba(244, 67, 54, 0.3) !important;
+      color: #c62828 !important;
+      border-radius: 4px;
+      padding: 4px 6px !important;
+      animation: shake 0.3s ease-in-out;
+      border-bottom: 3px solid #f44336 !important;
+      font-weight: 700;
     }
   `;
   document.head.appendChild(style);
@@ -80,6 +94,7 @@ export function initTypingEngine(text, onUpdate) {
         // Insert cursor after current span
         currentSpan.insertAdjacentElement("afterend", cursorEl);
         
+        // Horizontal scroll to keep current position centered
         const containerWidth = displayEl.offsetWidth;
         const spanOffsetLeft = currentSpan.offsetLeft;
         const centerOffset = containerWidth / 2;
@@ -133,6 +148,41 @@ export function initTypingEngine(text, onUpdate) {
       const expected = state.text[state.cursor] || "";
       const sp = displayInner.querySelector(`span[data-index="${state.cursor}"]`);
 
+      // Check if current character is already marked as wrong
+      if (sp?.classList.contains("wrong")) {
+        // If already wrong, check if they typed the correct key this time
+        if (e.key === expected) {
+          // Correct! Remove wrong marking and mark as correct
+          sp.classList.remove("wrong");
+          sp.classList.add("correct");
+          state.wrong--;
+          state.correct++;
+          state.cursor++;
+          
+          if (SFX.correct) {
+            SFX.correct.play();
+          }
+          
+          // FINISH TRIGGER
+          if (state.cursor === state.text.length) {
+            stop();
+            if (typeof onUpdate === "function") {
+              onUpdate({ ...state, finished: true });
+            }
+            return;
+          }
+          
+          updateCursor();
+          onUpdate && onUpdate(state);
+        } else {
+          // Still wrong - play error sound and don't advance
+          if (SFX.wrong) {
+            SFX.wrong.play();
+          }
+        }
+        return;
+      }
+
       state.typed++;
 
       let played = false;
@@ -144,20 +194,24 @@ export function initTypingEngine(text, onUpdate) {
           SFX.correct.play();
           played = true;
         }
+        
+        // Only advance cursor on correct key
+        state.cursor++;
+        
       } else {
+        // Wrong key - mark as wrong but DON'T advance cursor
         state.wrong++;
         if (sp) sp.classList.add("wrong");
         if (SFX.wrong) {
           SFX.wrong.play();
           played = true;
         }
+        // Cursor stays at the same position until corrected
       }
 
       if (!played && SFX.type) {
         SFX.type.play();
       }
-
-      state.cursor++;
 
       // FINISH TRIGGER FIX
       if (state.cursor === state.text.length) {
