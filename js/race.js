@@ -6,7 +6,7 @@ import { launchConfetti } from "./confetti.js";
 import { SFX } from "./sfx.js";
 
 const LANE_COUNT = 5; // 1_player + 4_bots
-const TRACK_PX = 800; // Simplified track width - no scroll button needed now.
+const TRACK_PX = 1100; // Distance to finish line (adjusted to match visual layout)
 
 function laneTop(i, laneH = 85, gap = 18) {
   return 30 + i * (laneH + gap);
@@ -187,16 +187,20 @@ export function initRaceScene(onFinishCb) {
         variation *
         (HEROES.find((h) => h.id === p.heroId)?.speed || 1);
 
+      // Check if reached finish line
       if (p.progress >= TRACK_PX && !p.finished) {
         p.finished = true;
         p.finishTime = Date.now();
       }
 
-      p.spr.style.left = (165 + Math.min(p.progress, TRACK_PX)) + "px";
+      // Move sprite - cap at TRACK_PX
+      const spritePos = Math.min(p.progress, TRACK_PX);
+      p.spr.style.left = (165 + spritePos) + "px";
     }
 
     const player = players[0];
-    player.spr.style.left = (165 + Math.min(player.progress, TRACK_PX)) + "px";
+    const playerSpritePos = Math.min(player.progress, TRACK_PX);
+    player.spr.style.left = (165 + playerSpritePos) + "px";
 
     if (Math.random() < 0.3) {
       spawnTrail(trackEl, player.spr);

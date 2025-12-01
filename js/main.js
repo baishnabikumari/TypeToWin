@@ -28,22 +28,27 @@ function renderHeroes() {
   let centerIndex = HEROES.findIndex(h => h.id === store.selected);
   if (centerIndex === -1) centerIndex = 0;
 
+  // Always render ALL heroes
   HEROES.forEach((h, i) => {
-  const d = document.createElement("div");
-  d.className = "hero";
-  d.dataset.index = i;
+    const d = document.createElement("div");
+    d.className = "hero";
+    d.dataset.index = i;
 
-  const diff = i - centerIndex;
-  const abs = Math.abs(diff);
+    const diff = i - centerIndex;
+    const abs = Math.abs(diff);
 
-  if (diff === 0) d.classList.add("center");
-  else if (abs === 1) d.classList.add("side");
-  else if (abs === 2) d.classList.add("side2");
-  else d.style.opacity = "0.0";
+    // Show center card + 1 on each side (total 3 visible)
+    if (diff === 0) {
+      d.classList.add("center");
+    } else if (abs === 1) {
+      d.classList.add("side");
+    } else {
+      d.style.display = "none"; // Hide cards that are not in view
+    }
 
-  d.innerHTML = `
-    <img src="${h.img}">
-    <div class="label">${h.name}</div>`;
+    d.innerHTML = `
+      <img src="${h.img}">
+      <div class="label">${h.name}</div>`;
 
     d.onclick = () => {
       if (!store.unlocked.includes(h.id)) {
@@ -60,17 +65,14 @@ function renderHeroes() {
     heroList.appendChild(d);
   });
 
-  const children = heroList.children;
-  if (children.length > 0 && children[centerIndex]) {
-    const el = children[centerIndex];
-    //smoooth scroool
-    el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest"});
-  }
-
+  // Update dots to show current page
   const dots = document.querySelectorAll(".carousel-dots .dot");
   if (dots && dots.length) {
-    const page = Math.floor(centerIndex / Math.max(1, Math.ceil(HEROES.length / dots.length)));
-    dots.forEach((dot, idx) => dot.classList.toggle("active", idx === page));
+    const currentPage = Math.floor(centerIndex / 1); // One hero per "page"
+    const activeDot = Math.min(currentPage, dots.length - 1);
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle("active", idx === activeDot);
+    });
   }
 }
 
@@ -135,9 +137,17 @@ if (quitRaceBtn) {
   });
 }
 
-// ✅ FIXED: Added Start Button Event Listener
+// ✅ FIXED: Added Start Button Event Listener with unlock check
 if (startBtn) {
   startBtn.addEventListener("click", () => {
+    const selectedHero = HEROES.find(h => h.id === store.selected);
+    
+    // Check if selected hero is unlocked
+    if (!store.unlocked.includes(store.selected)) {
+      alert(`${selectedHero?.name || 'This hero'} is locked! Please unlock it in the shop or select an unlocked hero.`);
+      return;
+    }
+    
     homeView.style.display = "none";
     raceView.style.display = "block";
     initRaceScene(() => {
@@ -169,7 +179,15 @@ const dotsContainer = document.querySelector(".carousel-dots");
 
 function moveCenter(delta) {
   const currentIndex = HEROES.findIndex(h => h.id === store.selected);
-  let nextIndex = (currentIndex + delta + HEROES.length) % HEROES.length;
+  let nextIndex = currentIndex + delta;
+  
+  // Loop around if at edges
+  if (nextIndex < 0) {
+    nextIndex = HEROES.length - 1;
+  } else if (nextIndex >= HEROES.length) {
+    nextIndex = 0;
+  }
+  
   store.selected = HEROES[nextIndex].id;
   save(store);
   renderHeroes();

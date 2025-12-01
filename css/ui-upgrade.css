@@ -7,7 +7,7 @@
 body {
   margin:0;
   font-family:'Inter', system-ui, sans-serif;
-  background:linear-gradient(135deg, #45d1c8, #7a5cff);
+  background:linear-gradient(135deg, #2c5f8d, #4a7ba7, #6b9ac4);
   min-height:100vh;
 }
 
@@ -25,7 +25,7 @@ body {
 
 /*Brand*/
 .brand-label {
-  color:#2563eb;
+  color:#ffd666;
   font-size:14px;
   font-weight:600;
   letter-spacing:0.5px;
@@ -46,12 +46,12 @@ body {
 
 .coins,
 .shop-pill {
-  background:rgba(255,255,255,0.2);
+  background:rgba(255, 214, 102, 0.25);
   backdrop-filter:blur(12px);
   padding:10px 18px;
   border-radius:999px;
   color:white;
-  border:1px solid rgba(255,255,255,0.25);
+  border:1px solid rgba(255, 214, 102, 0.35);
   font-weight:600;
   display:flex;
   align-items:center;
@@ -62,7 +62,8 @@ body {
 
 .coins:hover,
 .shop-pill:hover {
-  background:rgba(255,255,255,0.3);
+  background:rgba(255, 214, 102, 0.35);
+  border-color: rgba(255, 214, 102, 0.5);
   transform: translateY(-2px);
 }
 
@@ -226,25 +227,26 @@ body {
 }
 
 .btn.primary {
-  background:white;
-  color:#4f46e5;
+  background: linear-gradient(135deg, #ffd666, #f5c342);
+  color:#2c5f8d;
+  box-shadow: 0 4px 15px rgba(255, 214, 102, 0.4);
 }
 
 .btn.primary:hover {
-  background:#f0f0ff;
+  background: linear-gradient(135deg, #ffe699, #ffd666);
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(79,70,229,0.3);
+  box-shadow: 0 6px 20px rgba(255, 214, 102, 0.5);
 }
 
 .btn.ghost {
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.4);
-  color:white;
+  background:rgba(255, 214, 102, 0.15);
+  border:1px solid rgba(255, 214, 102, 0.4);
+  color:#ffd666;
 }
 
 .btn.ghost:hover {
-  background:rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.6);
+  background:rgba(255, 214, 102, 0.25);
+  border-color: rgba(255, 214, 102, 0.6);
 }
 
 /* View Management */
@@ -355,15 +357,15 @@ body {
   background: 
     repeating-linear-gradient(
       0deg,
-      #000 0px,
-      #000 14px,
-      #fff 14px,
-      #fff 28px
+      #2c5f8d 0px,
+      #2c5f8d 14px,
+      #ffd666 14px,
+      #ffd666 28px
     );
   border-radius: 9px;
   box-shadow: 
-    0 0 0 4px #ffd54f,
-    0 6px 20px rgba(0, 0, 0, 0.4);
+    0 0 0 4px #ffd666,
+    0 6px 20px rgba(255, 214, 102, 0.5);
   z-index: 50;
   border: none;
 }
@@ -394,15 +396,15 @@ body {
 .badge {
   position: absolute;
   left: 10px;
-  background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+  background: linear-gradient(135deg, #ffd666 0%, #f5c342 100%);
   padding: 10px 18px;
   border-radius: 20px;
   box-shadow: 
-    0 4px 12px rgba(255, 193, 7, 0.4),
+    0 4px 12px rgba(255, 214, 102, 0.4),
     inset 0 1px 2px rgba(255, 255, 255, 0.6);
   font-weight: 800;
   font-size: 14px;
-  color: #2c3e50;
+  color: #2c5f8d;
   border: 3px solid #fff;
   white-space: nowrap;
   z-index: 25;
@@ -419,7 +421,7 @@ body {
   transform: translateY(-50%);
   width: 34px;
   height: 34px;
-  background: linear-gradient(135deg, #7e57c2 0%, #5e35b1 100%);
+  background: linear-gradient(135deg, #4a7ba7 0%, #2c5f8d 100%);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -431,7 +433,7 @@ body {
   line-height: 1;
   padding-top: 2px;
   box-shadow: 
-    0 4px 12px rgba(94, 53, 177, 0.5),
+    0 4px 12px rgba(44, 95, 141, 0.5),
     inset 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 
@@ -532,10 +534,10 @@ body {
 
 .typing-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #66bb6a, #4caf50);
+  background: linear-gradient(90deg, #ffd666, #f5c342);
   border-radius: 4px;
   transition: width 0.2s ease-out;
-  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  box-shadow: 0 0 10px rgba(255, 214, 102, 0.6);
 }
 
 .correct {
@@ -582,7 +584,7 @@ body {
 }
 
 .stats span {
-  color: #4caf50;
+  color: #ffd666;
   font-size: 18px;
 }
 
@@ -609,7 +611,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(3, 6, 10, 0.5);
+  background: rgba(44, 95, 141, 0.6);
   backdrop-filter: blur(4px);
   z-index: 9999;
 }
@@ -621,14 +623,14 @@ body {
   background: #fff;
   padding: 24px;
   border-radius: 16px;
-  box-shadow: 0 30px 70px rgba(2, 12, 40, 0.4);
+  box-shadow: 0 30px 70px rgba(44, 95, 141, 0.4);
   position: relative;
 }
 
 .modal-card h2 {
   margin-top: 0;
   margin-bottom: 20px;
-  color: #4f46e5;
+  color: #2c5f8d;
 }
 
 #closeShop:hover {
@@ -654,7 +656,7 @@ body {
 
 .shopItem:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(79,72,255,0.15);
+  box-shadow: 0 8px 24px rgba(255, 214, 102, 0.2);
 }
 
 .shopItem img {
