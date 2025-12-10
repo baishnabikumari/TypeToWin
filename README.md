@@ -1,6 +1,3 @@
-<img width="1536" height="1024" alt="milkyway" src="https://github.com/user-attachments/assets/8966f4d2-5710-4cc5-81bf-793fec3ac434" />
-
-
 **TypeToWin** - A game to increase you typing skills.
 
 __Features(how to play and more info).__
