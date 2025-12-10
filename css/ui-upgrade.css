@@ -1,49 +1,190 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
-* {
-  box-sizing: border-box;
+:root{
+  --bg-black: #000000;
+  --red-main: #f25349;
+  --red-dark: #551a25;
+  --white: #ffffff;
+  --font-marker: 'Permanent Marker', cursive;
+  --font-body: 'Carter One', system-ui;
 }
+
+*{ box-sizing: border-box; user-select: none; }
 
 body {
   margin:0;
-  font-family:'Inter', system-ui, sans-serif;
-  background:linear-gradient(135deg, #2c5f8d, #4a7ba7, #6b9ac4);
-  min-height:100vh;
+  background-color:var(--bg-black);
+  color:var(--white);
+  font-family:var(--font-body);
+  height:100vh;
+  overflow:hidden;
 }
 
 .app {
-  padding:40px 60px;
-  background:radial-gradient(circle at center, rgba(0,0,0,0.15), transparent 70%);
+  height:100%;
+  display:flex;
+  flex-direction:column;
 }
 
-/*Header*/
-.header {
+.navbar{
   display:flex;
   justify-content:space-between;
-  align-items:flex-start;
+  align-items:center;
+  padding:30px 50px;
 }
 
-/*Brand*/
-.brand-label {
+.brand-logo {
+  font-family:var(--font-marker);
+  font-size:32px;
   color:#ffd666;
-  font-size:14px;
-  font-weight:600;
-  letter-spacing:0.5px;
+  letter-spacing:1px;
 }
-
-.brand-title {
-  margin:8px 0 0;
-  font-size:34px;
-  font-weight:700;
-  color:#ffffff;
-}
-
-/*Right HUD*/
-.hud {
+.nav-buttons{
   display:flex;
-  gap:14px;
+  gap:15px;
+}
+.nav-pill{
+  background:var(--red-dark);
+  color:#fff;
+  font-family:var(--font-marker);
+  font-size:16px;
+  padding:10px 24px;
+  border-radius:12px;
+  text-decoration:none;
+  border:2px solid var(--red-dark);
+  cursor:pointer;
+  transition:0.2s;
+}
+.nav-pill:hover{
+  background:var(--red-main);
+  border-color:var(--red-main);
+  transform:translateY(-2px);
 }
 
+.home-container{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-items:center;
+  margin-top:-50px;
+  position:relative;
+}
+
+.cta-container{
+  text-align:center;
+  position:relative;
+  z-index:20;
+  margin-bottom:20px;
+}
+
+.cta-sub{
+  font-size:18px;
+  margin:0;
+  font-weight:bold;
+}
+
+.cta-main{
+  font-family:var(--font-marker);
+  font-size:70px;
+  margin:0;
+  cursor:pointer;
+  text-shadow:0 4px 0 #333;
+  transition:transform 0.1s;
+}
+.cta-main:active{
+  transform:scale(0.95);
+}
+.curved-arrow{
+  position:absolute;
+  width:100px;
+  height:100px;
+  right:-80px;
+  top:40px;
+  transform:rotate(10deg);
+  pointer-events:none;
+}
+
+.dashboard-grid{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  gap:80px;
+  perspective:1000px;
+}
+
+.side-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  z-index:10;
+}
+
+.circle-btn{
+  width:110px;
+  height:110px;
+  background:var(--red-main);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:transform 0.3s;
+  box-shadow:0 8px 0 var(--red-dark);
+  border:4px solid #fff;
+}
+
+.circle-btn:active{
+  transform:translateY(8px) !important;
+  box-shadow:none;
+}
+
+.circle-btn svg {
+  width:50px;
+  height:50px;
+}
+.tilt-left {
+  transform:rotate(-8deg);
+}
+.tilt-left:hover{
+  transform:rotate(-8deg) scale(1.1);
+}
+
+.tilt-right{
+  transform:rotate(8deg);
+}
+.tilt-right:hover{
+  transform:rotate(8deg) scale(1.1);
+}
+
+.icon-lebel{
+  font-family:var(--font-marker);
+  font-size:20px;
+  transform:rotate(-4deg);
+}
+
+.dial-wrapper{
+  width:300px;
+  height:380px;
+  position:relative;
+  display:flex;
+  justify-content:center;
+}
+
+.hero-dial{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+
+.hero-card{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  margin-left:-110px;
+  width:220px;
+  
+}
 .coins,
 .shop-pill {
   background:rgba(255, 214, 102, 0.25);
@@ -702,6 +843,7 @@ body {
   color: #fff;
   pointer-events: none;
   z-index: 10000;
+
   transition: transform 0.9s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.9s ease;
 }
 

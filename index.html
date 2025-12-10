@@ -5,101 +5,100 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>TypeToWin</title>
   <!-- Only using ui-upgrade.css for consistent styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Permanent+Marker&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/ui-upgrade.css">
 </head>
 <body>
   <div class="app">
 
-    <header class="header">
-      <div class="brand">
-        <span class="brand-label">TypeToWin</span>
-        <h1 class="brand-title">Choose Your Hero</h1>
-      </div>
-
-      <div class="hud">
-        <div class="coins">
-          <!--Emoji instead of missing coin.png -->
-          <span style="font-size: 18px;">🪙</span>
-          <span id="coinCount">0</span>
-        </div>
-        <button id="openShop" class="shop-pill">Shop</button>
+    <header class="navbar">
+      <div class="brand-logo">TYPE-TO-WIN</div>
+      <div class="nav-buttons">
+        <a href="https://github.com/baishnabikumari/TypeToWin" target="_blank" class="nav-pill">GITHUB</a>
+        <button id="howToPLayBtn" class="nav-pill">HOW TO PLAY</button>
       </div>
     </header>
+    <div style="display:none;">
+      <span id="coinCount">0</span>
+    </div>
 
     <!--Home Screen-->
-    <main id="home" class="view hero-ui">
-      <div class="carousel-wrapper">
-
-        <button class="carousel-btn left" id="prevHero">‹</button>
-
-        <div class="hero-carousel">
-          <div id="heroList" class="hero-list hero-row"></div>
+    <main id="home" class="home-container">
+      <div class="cta-container">
+        <p class="cta-sub">Select character and tap</p>
+        <h1 id="playTrigger" class="cta-main">PLAY</h1>
+        <svg class="curved-arrow" viewBox="0 0 120 100" fill="none">
+          <path d="M90 10 C 20 10, 40 80, 50 90" stroke="#fff8e7" stroke-width="4" stroke-linecap="round" />
+          <path d="M40 80 L 50 90 L 65 75" stroke="#fff8e7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="dashboard-grid">
+        <div class="side-item left">
+          <div id="openShop" class="circle-btn tile-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1" 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6></path>
+            </svg>
+          </div>
+          <div class="icon-label">SHOP</div>
         </div>
-
-        <button class="carousel-btn right" id="nextHero">›</button>
-
-      </div>
-
-      <div class="carousel-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-
-      <div class="controls">
-        <button id="startBtn" class="btn primary">Start Race</button>
-        <button id="resetBtn" class="btn ghost">Reset Progress</button>
-      </div>
+        <div class="dial-wrapper">
+          <div id="heroList" class="hero-dial">
+          </div>
+        </div>
+        <div class="side-item right">
+          <div id="openTrack" class="circle-btn tile-right">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 12c0-3.3-2.7-6-6-6s-6 2.7-6 6"></path>
+              <path d="M6 12v4c0 2.2 1.8 4 4 4h4c2.2 0 4-1.8 4-4v-4"></path>
+              <path d="M2 12h4"></path>
+              <path d="M14 12h-4"></path>
+            </svg>
+          </div>
+          <div class="icon-label">TRACKS</div>
+        </div>
     </main>
 
     <!--Race Screen-->
     <section id="raceView" class="view" style="display:none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h2 style="margin: 0; color: white; font-size: 24px;">🏁 Race in Progress</h2>
-        <button id="quitRace" class="btn ghost" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">← Back to Home</button>
+      <div class="race-top">
+        <h2>🏁 Race in Progress</h2>
+        <button id="quitRace" class="btn ghost">Give Up</button>
       </div>
+
       <div id="track" class="track"></div>
       <div id="go" class="go">GO</div>
-      <div class="typingArea">
-        <div class="typing-container">
-          <div id="displayText" class="displayText">
-            <div id="displayTextInner" class="displayText-inner"></div>
+      <div class="typing-hub">
+        <div class="typing-box">
+          <div id="displayText" class="display-text">
+            <div id="displayTextInner"></div>
           </div>
-          <input id="hiddenInput" class="hiddenInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Typing input">
-
-          <div class="stats">
-            <div>WPM: <span id="wpm">0</span></div>
-            <div>ACC: <span id="acc">100%</span></div>
-            <div>Progress: <span id="progress">0%</span></div>
+          <input id="hiddenInput" class="hiddenInput" type="text">
+        </div>
+        <div class="progress-container">
+          <div id="typingProgressBar" class="p-bar"></div>
+        </div>
+          <div class="stats-bar">
+            <div>WPM: <b id="wpm">0</b></div>
+            <div>ACC: <b id="acc">100%</b></div>
+            <div>Progress: <b id="progress">0%</b></div>
           </div>
         </div>
-        
-        <div class="typing-progress">
-          <div id="typingProgressBar" class="typing-progress-bar" style="width: 0%"></div>
-        </div>
-      </div>
-
-      <div id="results" class="results" style="display:none;"></div>
+        <div id="results" class="results" style="display:none;"></div>
     </section>
 
     <!--Shop Modal-->
     <div id="shopModal" class="modal" style="display:none;">
-      <div class="modal-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <h2 style="margin: 0; color: #4f46e5; font-size: 28px;">🛍️ Shop</h2>
-          <button id="closeShop" class="btn" style="
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-          ">✕ Close</button>
+      <div class="shop-card">
+        <div class="shop-header">
+          <h2>SHOP</h2>
+          <button id="closeShop" class="close-btn">x</button>
         </div>
-        <div id="shopGrid" class="shopGrid"></div>
+        <div class="wallet-info">Your Coins: <span id="shopCoinDisplay">0</span> 🪙</div>
+        <div id="shopGrid" class="shop-grid"></div>
       </div>
     </div>
   </div>
