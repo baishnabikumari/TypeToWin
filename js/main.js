@@ -22,9 +22,9 @@ function renderHeroes() {
   heroList.innerHTML = "";
 
   //selected hero
-  let centerIndex = HEROES.findIndex(h => h.id === store.selected);
-  if (centerIndex === -1) {
-    currentIndex = 0;
+  let currentIdx = HEROES.findIndex(h => h.id === store.selected);
+  if (currentIdx === -1) {
+    currentIdx = 0;
     store.selected = HEROES[0].id;
   }
 
@@ -42,6 +42,7 @@ function renderHeroes() {
       card.onclick = () => startGame();
     } else if (index === leftIdx) {
       card.classList.add("left");
+      card.onclick = () => selectHero(hero.id);
     } else if (index === rightIdx) {
       card.classList.add("right");
       card.onclick = () => selectHero(hero.id);
@@ -91,7 +92,7 @@ function closeShop() {
 
 function updateCoins() {
   const amt = store.coins;
-  if (coinDisplay) coinDisplay.textContent = amt;
+  if (coinCount) coinCount.textContent = amt;
   if (shopCoinDisplay) shopCoinDisplay.textContent = amt;
 }
 
@@ -103,7 +104,7 @@ function renderShop() {
     const isSelected = store.selected === h.id;
 
     el.className = `shop-item ${isUnlocked ? "owned" : ""}`;
-    item.innerHTML = `
+    el.innerHTML = `
         <img src="${h.img}" style="width:60px; height:60px; object-fit:contain;">
         <h3 style="margin:5px 0; font-family:var(--font-marker)">${h.name}</h3>
         <div style="font-size:12px; color:#aaa;">Speed: ${h.speed}x</div>`;
