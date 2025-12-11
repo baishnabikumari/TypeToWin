@@ -161,8 +161,8 @@ body {
 }
 
 .circle-btn {
-  width: 130px;
-  height: 130px;
+  width: 120px;
+  height: 120px;
   background: var(--red-main);
   border-radius: 50%;
   display: flex;
@@ -173,16 +173,17 @@ body {
   box-shadow: 0 10px 0 var(--red-dark);
   border: 5px solid #fff;
   position: relative;
+  z-index: 10;
 }
 
 .circle-btn img{
-  width: 115%;
+  width: 170%;
   height: auto;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  filter: drop-shadow(0 4px 0 rgba(0,0,0,0.1));
+  filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
   pointer-events: none;
 }
 
@@ -201,11 +202,12 @@ body {
 }
 
 .tilt-left img{
-  transform: translate(-55%,-55%) rotate(-5deg);
+  width: 160%;
+  transform: translate(-55%,-55%) rotate(-10deg);
 }
 
 .tilt-left:hover {
-  transform: rotate(-10deg) scale(1.1);
+  transform: rotate(-5deg) scale(1.1);
 }
 
 .tilt-right {
@@ -213,21 +215,26 @@ body {
 }
 
 .tilt-right img{
+  width: 165%;
   transform: translate(-45%,-50%) rotate(5deg);
 }
 
 .tilt-right:hover {
-  transform: rotate(10deg) scale(1.1);
+  transform: rotate(5deg) scale(1.1);
 }
 
 .icon-label {
   font-family: var(--font-marker);
-  font-size: 24px;
+  font-size: 26px;
   color: white;
   transform: rotate(-4deg);
   text-shadow: 3px 3px 0 #000;
+  letter-spacing: 1.5px;
+  margin-top: 20px;
+  position: relative;
   letter-spacing: 1px;
   text-transform: uppercase;
+  z-index: 20;
 }
 
 .dial-wrapper {
