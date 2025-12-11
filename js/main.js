@@ -5,20 +5,17 @@ import { initRaceScene } from "./race.js";
 /* DOM ele */
 const heroList = document.getElementById("heroList");
 const coinCount = document.getElementById("coinCount");
-const startBtn = document.getElementById("startBtn");
+const shopCoinDisplay = document.getElementById("shopCoinDisplay");
+const playTrigger = document.getElementById("playTrigger");
 const shopBtn = document.getElementById("openShop");
+const trackBtn = document.getElementById("openTracks");
 const shopModal = document.getElementById("shopModal");
 const shopGrid = document.getElementById("shopGrid");
 const closeShopBtn = document.getElementById("closeShop");
 const homeView = document.getElementById("home");
 const raceView = document.getElementById("raceView");
-const resetBtn = document.getElementById("resetBtn");
 const quitRaceBtn = document.getElementById("quitRace");
-
-/* render hud */
-function renderHUD() {
-  coinCount.textContent = store.coins;
-}
+const howToPlayBtn = document.getElementById("howToPlayBtn");
 
 /* render hero on home screen */
 function renderHeroes() {
@@ -26,187 +23,156 @@ function renderHeroes() {
 
   //selected hero
   let centerIndex = HEROES.findIndex(h => h.id === store.selected);
-  if (centerIndex === -1) centerIndex = 0;
+  if (centerIndex === -1) {
+    currentIndex = 0;
+    store.selected = HEROES[0].id;
+  }
+
+  const total = HEROES.length;
+  const leftIdx = (currentIdx - 1 + total) % total;
+  const rightIdx = (currentIdx + 1) % total;
 
   // Always render ALL heroes
-  HEROES.forEach((h, i) => {
-    const d = document.createElement("div");
-    d.className = "hero";
-    d.dataset.index = i;
+  HEROES.forEach((hero, index) => {
+    const card = document.createElement("div");
+    card.className = "hero-card";
 
-    const diff = i - centerIndex;
-    const abs = Math.abs(diff);
-
-    // Show center card + 1 on each side (total 3 visible)
-    if (diff === 0) {
-      d.classList.add("center");
-    } else if (abs === 1) {
-      d.classList.add("side");
+    if (index === currentIdx) {
+      card.classList.add("center");
+      card.onclick = () => startGame();
+    } else if (index === leftIdx) {
+      card.classList.add("left");
+    } else if (index === rightIdx) {
+      card.classList.add("right");
+      card.onclick = () => selectHero(hero.id);
     } else {
-      d.style.display = "none"; // Hide cards that are not in view
+      card.classList.add("hidden");
     }
-
-    d.innerHTML = `
-      <img src="${h.img}">
-      <div class="label">${h.name}</div>`;
-
-    d.onclick = () => {
-      if (!store.unlocked.includes(h.id)) {
-        if (!confirm("This hero is locked. Open shop?")) return;
-        shopBtn.click();
-        return;
-      }
-
-      store.selected = h.id;
-      save(store);
-      renderHeroes();
-      renderHUD();
-    };
-    heroList.appendChild(d);
+    card.innerHTML = `
+      <img src="${hero.img}" alt="${hero.name}">
+      <div class="name-plate">${hero.name}</div>
+    `;
+    heroList.appendChild(card);
   });
-
-  // Update dots to show current page
-  const dots = document.querySelectorAll(".carousel-dots .dot");
-  if (dots && dots.length) {
-    const currentPage = Math.floor(centerIndex / 1); // One hero per "page"
-    const activeDot = Math.min(currentPage, dots.length - 1);
-    dots.forEach((dot, idx) => {
-      dot.classList.toggle("active", idx === activeDot);
-    });
-  }
 }
 
+function selectHero(id) {
+  store.selected = id;
+  save(store);
+  renderHeroes();
+}
+
+function startGame() {
+  const hero = HEROES.find(h => h.id === store.selected);
+
+  if (!store.unlocked.includes(hero.id)) {
+    openShop();
+    return;
+  }
+  homeView.style.display = "none";
+  document.querySelector(".navbar").style.display = "none";
+  raceView.style.display = "block";
+
+  initRaceScene((results) => {
+    updateCoins();
+  });
+}
 // making shop functional
 function openShop() {
+  updateCoins();
   shopModal.style.display = "flex";
   renderShop();
 }
 
-function closeShopModal() {
+function closeShop() {
   shopModal.style.display = "none";
+  renderHeroes();
+}
+
+function updateCoins() {
+  const amt = store.coins;
+  if (coinDisplay) coinDisplay.textContent = amt;
+  if (shopCoinDisplay) shopCoinDisplay.textContent = amt;
 }
 
 function renderShop() {
   shopGrid.innerHTML = "";
-
   HEROES.forEach((h) => {
-    const item = document.createElement("div");
-    item.className = "shopItem";
+    const el = document.createElement("div");
+    const isUnlocked = store.unlocked.includes(h.id);
+    const isSelected = store.selected === h.id;
 
-    const unlocked = store.unlocked.includes(h.id);
+    el.className = `shop-item ${isUnlocked ? "owned" : ""}`;
     item.innerHTML = `
-        <img src="${h.img}" style="width:72px">
-        <h4>${h.name}</h4>
-        <div>${unlocked ? "Unlocked" : h.price + " R"}</div>`;
+        <img src="${h.img}" style="width:60px; height:60px; object-fit:contain;">
+        <h3 style="margin:5px 0; font-family:var(--font-marker)">${h.name}</h3>
+        <div style="font-size:12px; color:#aaa;">Speed: ${h.speed}x</div>`;
 
-    if (!unlocked) {
-      const btn = document.createElement("button");
-      btn.className = "btn";
-      btn.textContent = "Buy";
-
+    const btn = document.createElement("button");
+    if (isSelected) {
+      btn.textContent = "EQUIPPED";
+      btn.disabled = true;
+      btn.style.background = "#555";
+    } else if (isUnlocked) {
+      btn.textContent = "SELECT";
       btn.onclick = () => {
-        if (store.coins >= (h.price || 0)) {
-          store.coins -= h.price || 0;
-          if (!store.unlocked.includes(h.id)) store.unlocked.push(h.id);
+        selectHero(h.id);
+        renderShop();
+      };
+    } else {
+      btn.textContent = `BUY ${h.price}`;
+      btn.onclick = () => {
+        if (store.coins >= h.price) {
+          store.coins -= h.price;
+          store.unlocked.push(h.id);
+          store.selected = h.id;
           save(store);
+          updateCoins();
           renderShop();
-          renderHeroes();
-          renderHUD();
         } else {
-          alert("Not enough coins");
+          alert("Not Enough coins!");
         }
       };
-
-      item.appendChild(btn);
     }
-
-    shopGrid.appendChild(item);
+    el.appendChild(btn);
+    shopGrid.appendChild(el);
   });
 }
 
-/* Event bindings */
+if (playTrigger) playTrigger.addEventListener("click", startGame);
 if (shopBtn) shopBtn.addEventListener("click", openShop);
-if (closeShopBtn) closeShopBtn.addEventListener("click", closeShopModal);
+if (closeShopBtn) closeShopBtn.addEventListener("click", closeShop);
+if (trackBtn) trackBtn.addEventListener("click", () => alert("More track coming soon!"));
 
 // ✅ Quit Race Button - Go back to home
 if (quitRaceBtn) {
   quitRaceBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to quit the race? Progress will be lost.")) {
+    if (confirm("Quit race?")) {
       location.reload(); // Reload to reset everything
     }
   });
 }
 
-// ✅ FIXED: Added Start Button Event Listener with unlock check
-if (startBtn) {
-  startBtn.addEventListener("click", () => {
-    const selectedHero = HEROES.find(h => h.id === store.selected);
-    
-    // Check if selected hero is unlocked
-    if (!store.unlocked.includes(store.selected)) {
-      alert(`${selectedHero?.name || 'This hero'} is locked! Please unlock it in the shop or select an unlocked hero.`);
-      return;
-    }
-    
-    homeView.style.display = "none";
-    raceView.style.display = "block";
-    initRaceScene(() => {
-      // Callback after race finishes
-      renderHUD();
-    });
+if (howToPlayBtn) {
+  howToPlayBtn.addEventListener("click", () => {
+    alert("Type the Text exactly as shown to move your racer.");
   });
 }
+window.addEventListener("keydown", (e) => {
+  if (homeView.style.display === "none" || shopModal.style.display === "flex") return;
 
-if (resetBtn)
-  resetBtn.addEventListener("click", () => {
-    if (!confirm("Reset progress?")) return;
-    store.coins = 0;
-    store.unlocked = ["packo", "beavy"];
-    store.selected = HEROES[0]?.id || null;
-    save(store);
-    renderHUD();
-    renderHeroes();
-    renderShop();
-  });
-
-/* Initial render */
-renderHUD();
-renderHeroes();
-
-const prevBtn = document.getElementById("prevHero");
-const nextBtn = document.getElementById("nextHero");
-const dotsContainer = document.querySelector(".carousel-dots");
-
-function moveCenter(delta) {
-  const currentIndex = HEROES.findIndex(h => h.id === store.selected);
-  let nextIndex = currentIndex + delta;
-  
-  // Loop around if at edges
-  if (nextIndex < 0) {
-    nextIndex = HEROES.length - 1;
-  } else if (nextIndex >= HEROES.length) {
-    nextIndex = 0;
+  if (e.key === "ArrowLeft") {
+    const currentIdx = HEROES.findIndex(h => h.id === store.selected);
+    const prevIdx = (currentIdx - 1 + HEROES.length) % HEROES.length;
+    selectHero(HEROES[prevIdx].id);
+  } else if (e.key === "ArrowRight") {
+    const currentIdx = HEROES.findIndex(h => h.id === store.selected);
+    const nextIdx = (currentIdx + 1) % HEROES.length;
+    selectHero(HEROES[nextIdx].id);
+  } else if (e.key === "Enter") {
+    startGame();
   }
-  
-  store.selected = HEROES[nextIndex].id;
-  save(store);
-  renderHeroes();
-  renderHUD();
-}
+});
 
-if (prevBtn) prevBtn.addEventListener("click", () => moveCenter(-1));
-if (nextBtn) nextBtn.addEventListener("click", () => moveCenter(1));
-
-if (dotsContainer) {
-  const dots = Array.from(dotsContainer.querySelectorAll(".dot"));
-  dots.forEach((dot, idx) => {
-    dot.addEventListener("click", () => {
-      const chunk = Math.max(1, Math.ceil(HEROES.length / dots.length));
-      const target = Math.min(HEROES.length - 1, idx * chunk);
-      store.selected = HEROES[target].id;
-      save(store);
-      renderHeroes();
-      renderHUD();
-    });
-  });
-}
+updateCoins();
+renderHeroes();
