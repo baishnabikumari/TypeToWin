@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,9 +8,11 @@
   <!-- Only using ui-upgrade.css for consistent styling -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Permanent+Marker&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Permanent+Marker&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/ui-upgrade.css">
 </head>
+
 <body>
   <div class="app">
 
@@ -31,13 +34,15 @@
         <h1 id="playTrigger" class="cta-main">PLAY</h1>
         <svg class="curved-arrow" viewBox="0 0 120 100" fill="none">
           <path d="M90 10 C 20 10, 40 80, 50 90" stroke="#fff8e7" stroke-width="4" stroke-linecap="round" />
-          <path d="M40 80 L 50 90 L 65 75" stroke="#fff8e7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M40 80 L 50 90 L 65 75" stroke="#fff8e7" stroke-width="4" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
       </div>
       <div class="dashboard-grid">
         <div class="side-item left">
           <div id="openShop" class="circle-btn tile-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round">
               <circle cx="9" cy="21" r="1"></circle>
               <circle cx="20" cy="21" r="1"></circle>
               <path d="M1" 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6></path>
@@ -51,7 +56,8 @@
         </div>
         <div class="side-item right">
           <div id="openTrack" class="circle-btn tile-right">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round">
               <path d="M18 12c0-3.3-2.7-6-6-6s-6 2.7-6 6"></path>
               <path d="M6 12v4c0 2.2 1.8 4 4 4h4c2.2 0 4-1.8 4-4v-4"></path>
               <path d="M2 12h4"></path>
@@ -81,13 +87,13 @@
         <div class="progress-container">
           <div id="typingProgressBar" class="p-bar"></div>
         </div>
-          <div class="stats-bar">
-            <div>WPM: <b id="wpm">0</b></div>
-            <div>ACC: <b id="acc">100%</b></div>
-            <div>Progress: <b id="progress">0%</b></div>
-          </div>
+        <div class="stats-bar">
+          <div>WPM: <b id="wpm">0</b></div>
+          <div>ACC: <b id="acc">100%</b></div>
+          <div>Progress: <b id="progress">0%</b></div>
         </div>
-        <div id="results" class="results" style="display:none;"></div>
+      </div>
+      <div id="results" class="results" style="display:none;"></div>
     </section>
 
     <!--Shop Modal-->
@@ -105,4 +111,5 @@
 
   <script type="module" src="js/main.js"></script>
 </body>
+
 </html>
