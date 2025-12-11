@@ -58,30 +58,42 @@
 
     <!--Race Screen-->
     <section id="raceView" class="view" style="display:none;">
-      <div class="navbar" style="padding: 0; margin-bottom: 20px;">
-        <h2>🏁 Race in Progress</h2>
-        <button id="quitRace" class="nav-pill" style="font-size: 14px;">Give Up</button>
+      <div class="race-ui-layer">
+        <div class="top-actions">
+          <button id="quitRace" class="btn-giveup">GIVE UP</button>
+        </div>
+        <div class="stats-container">
+          <div class="stat-pill">
+            <span class="stat-label">WPM -</span>
+            <span id="wpm" class="stat-value">0</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">ACC -</span>
+            <span id="acc" class="stat-value">100%</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">PROGRESS -</span>
+            <span id="progress" class="stat-value">0%</span>
+          </div>
+        </div>
       </div>
-
-      <div id="track" class="track"></div>
-      <div id="go" class="go">GO</div>
-      <div class="typing-hud">
-        <div class="typing-box">
-          <div id="displayText" class="display-text">
+      <div class="oval-track-wrapper">
+        <img src="assets/ui/Maintrack.png" class="track-bg-image" alt="Race Track">
+        <div id="track" class="track-overlay"></div>
+      </div>
+      <div class="typing-panel">
+        <div class="typing-box-new">
+          <div id="displayText" class="display-text-new">
             <div id="displayTextInner"></div>
           </div>
-          <input id="hiddenInput" class="hidden-input" type="text">
+          <input id="hiddenInput" class="hidden-input" type="text" style="opacity: 0; position: absolute;">
         </div>
-        <div class="progress-container">
-          <div id="typingProgressBar" class="p-bar"></div>
+        <div class="custom-progress-wrapper">
+          <div id="typingProgressBar" class="custom-progress-bar"></div>
         </div>
-        <div class="stats-bar">
-          <div>WPM: <b id="wpm">0</b></div>
-          <div>ACC: <b id="acc">100%</b></div>
-          <div>Progress: <b id="progress">0%</b></div>
-        </div>
+        <div class="progress-label">PROGRESS BAR</div>
       </div>
-      <div id="results" class="results-modal" style="display:none;"></div>
+      <div id="results" class="results-modal" style="display: none;"></div>
     </section>
   </div>
     <!--Shop Modal-->
