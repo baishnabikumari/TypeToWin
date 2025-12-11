@@ -408,13 +408,13 @@ body {
 }
 
 .modal-overlay {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.85);
-  z-index: 9999;
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -441,7 +441,7 @@ body {
   border-radius: 20px;
   padding: 30px;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
   animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -451,7 +451,7 @@ body {
   align-items: center;
   margin-bottom: 20px;
   border-bottom: 2px solid rgba(255,255,255,0.1);
-  padding-bottom: 10px;
+  padding-bottom: 15px;
 }
 
 .shop-header h2 {
@@ -466,7 +466,7 @@ body {
   background: none;
   border: none;
   color: white;
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
   transition: transform 0.2s;
   font-family: var(--font-marker);
@@ -486,32 +486,43 @@ body {
 
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
 }
 
 .shop-item {
   background: rgba(0, 0, 0, 0.3);
   padding: 15px;
-  border-radius: 10px;
+  border-radius: 12px;
   text-align: center;
   border: 2px solid transparent;
+  transition: transform 0.2s;
+}
+.shop-item:hover{
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.2);
 }
 
 .shop-item.owned {
   border-color: #4caf50;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .shop-item button {
   background: var(--red-main);
   border: none;
   color: white;
-  padding: 5px 15px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 8px;
   font-family: var(--font-body);
+  font-weight: bold;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 10px;
+  width: 100%;
+}
+.shop-item button:disabled{
+  background: #555;
+  cursor: default;
 }
 
 .results-modal {
