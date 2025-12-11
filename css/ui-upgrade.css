@@ -3,7 +3,7 @@
   --red-main: #f25349;
   --red-dark: #551a25;
   --white: #ffffff;
-  --font-marker: 'Permanent Marker', cursive;
+  --font-marker: 'Luckiest Guy', cursive;
   --font-body: 'Carter One', system-ui;
 }
 
@@ -38,6 +38,7 @@ body {
   font-family: var(--font-marker);
   font-size: 32px;
   color: #fff;
+  letter-spacing: 2px;
   letter-spacing: 1px;
 }
 
@@ -50,13 +51,15 @@ body {
   background: var(--red-dark);
   color: #fff;
   font-family: var(--font-marker);
-  font-size: 16px;
+  font-size: 18px;
   padding: 10px 24px;
   border-radius: 12px;
   text-decoration: none;
   border: 2px solid var(--red-dark);
   cursor: pointer;
   transition: 0.2s;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .nav-pill:hover {
@@ -90,11 +93,13 @@ body {
 
 .cta-main {
   font-family: var(--font-marker);
-  font-size: 70px;
+  font-size: 80px;
   margin: 0;
   cursor: pointer;
-  text-shadow: 0 4px 0 #333;
+  text-shadow: 4px 4px 0 #333;
   transition: transform 0.1s;
+  letter-spacing: 3px;
+  text-transform: uppercase;
 }
 
 .cta-main:active {
@@ -170,8 +175,11 @@ body {
 
 .icon-label {
   font-family: var(--font-marker);
-  font-size: 20px;
+  font-size: 22px;
   transform: rotate(-4deg);
+  margin-top: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 .dial-wrapper {
@@ -227,6 +235,7 @@ body {
   font-size: 24px;
   text-transform: uppercase;
   color: white;
+  letter-spacing: 2px;
 }
 
 .hero-card.center {
@@ -400,13 +409,27 @@ body {
 
 .modal-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.85);
-  z-index: 100;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .shop-card {
@@ -418,26 +441,47 @@ body {
   border-radius: 20px;
   padding: 30px;
   overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .shop-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+  padding-bottom: 10px;
 }
 
 .shop-header h2 {
   margin: 0;
   font-family: var(--font-marker);
   font-size: 32px;
+  color: #fff;
+  letter-spacing: 1px;
 }
 
 .close-btn {
   background: none;
   border: none;
   color: white;
-  font-size: 28px;
+  font-size: 24px;
   cursor: pointer;
+  transition: transform 0.2s;
+  font-family: var(--font-marker);
+}
+.close-btn:hover{
+  color: var(--red-main);
+  transform: scale(1.2);
+}
+
+.wallet-info {
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: #ffd700;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .shop-grid {
