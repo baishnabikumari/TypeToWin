@@ -1,6 +1,15 @@
+**Note** -- All new Ui with 0 ai own made on canva with card dail.
+**TypeToWin** - A game to increase you typing skills.
+<img width="1440" height="721" alt="Screenshot 2025-12-13 at 2 02 44 AM" src="https://github.com/user-attachments/assets/6e26c292-ac41-46ec-bfb1-b5e5b6604920" />
+<img width="1440" height="771" alt="Screenshot 2025-12-13 at 2 03 26 AM" src="https://github.com/user-attachments/assets/6a68b554-60ea-4507-a2f2-4720b97f9833" />
+<img width="1440" height="770" alt="Screenshot 2025-12-13 at 2 03 49 AM" src="https://github.com/user-attachments/assets/48e8797e-55cc-44e4-91d4-f41c017c58f9" />
 
-**Note** All new Ui with 0 ai own made on canva with card dail.
-**TypeToWin** - A game to increase you typing skills .
+video gameplay-
+
+https://github.com/user-attachments/assets/b28fb868-2e64-447f-ab14-20870707aaee
+
+-- Don't think my typing is not good i just typed some keys wrong so that you should know about what happens if you type wrong also which sound you hear when you type wrong!!! 
+
 
 __Features(how to play and more informations).__
 
