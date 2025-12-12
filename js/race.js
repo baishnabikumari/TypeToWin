@@ -1,10 +1,9 @@
-// for race
 import { HEROES } from "./heroes.js";
 import { store, addCoins, save } from "./store.js";
 import { initTypingEngine } from "./typing.js";
 import { SFX } from "./sfx.js";
 
-const LANE_COUNT = 4; // 1_player + 4_bots
+const LANE_COUNT = 4;
 
 export function initRaceScene(onFinishCb) {
   const trackEl = document.getElementById("track");
@@ -15,6 +14,7 @@ export function initRaceScene(onFinishCb) {
   resultsEl.style.display = "none";
 
   const players = [];
+
   for (let i = 0; i < LANE_COUNT; i++) {
     const lane = document.createElement("div");
     lane.className = "track-lane";
@@ -28,6 +28,7 @@ export function initRaceScene(onFinishCb) {
     } else {
       hero = HEROES[(i + 2) % HEROES.length];
     }
+
     const spr = document.createElement("div");
     spr.className = "sprite";
     spr.style.left = "0%";
@@ -38,17 +39,12 @@ export function initRaceScene(onFinishCb) {
     spr.appendChild(img);
 
     if (isPlayer) {
-      const badge = document.createElement("div");
-      badge.className = "badge";
-      badge.textContent = "YOU";
-      spr.appendChild(tag);
-    } else {
       const tag = document.createElement("div");
-      tag.className = "badge";
-      tag.style.background = "#ccc";
-      tag.textContent = "Bot" + i;
+      tag.className = "player-tag";
+      tag.textContent = "YOU";
       spr.appendChild(tag);
-    }
+    } 
+    
     lane.appendChild(spr);
 
     players.push({
@@ -61,34 +57,35 @@ export function initRaceScene(onFinishCb) {
       wpm: isPlayer ? 0 : 20 + Math.random() * 30,
     });
   }
-  const texts = [
-    "Typing skills are an art that can be mastered as one gains more time and practice in the craft of learning to type fast and correctly.",
-    "The ability to type well has turned out to be a key to success in nearly all professions in the digital era.",
-    "The proper typing posture and the placement of the fingers are underestimated by many people.",
-    "The most effective way that you enhance your typing speed is by undertaking a calculated practice by using a collection of exercises and the true world typing cases.",
-    "Touch typing is typing without having to look at the keyboard and instead having muscle memory and spatial awareness."
-  ];
 
+  const texts = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Typing speed improves with daily practice and focus.",
+    "Accuracy is just as important as speed in this game.",
+    "Keep your eyes on the screen and fingers on the keys.",
+    "Coding is like typing but you have to think a lot more."
+  ];
   const text = texts[Math.floor(Math.random() * texts.length)];
 
   let typingEngine;
-
   const { state, start, stop } = initTypingEngine(text, (live) => {
     const player = players.find(p => p.id === "you");
-
+    
     const percent = (live.correct / text.length) * 100;
-
     const speedMod = HEROES.find((h) => h.id === player.heroId)?.speed || 1;
+    
     player.progress = Math.min(100, percent * speedMod);
-    // Update player finished status based on typing completion
+
     if (live.correct >= text.length && !player.finished) {
       player.finished = true;
       player.finishTime = Date.now();
     }
   });
 
-  goEl.classList.add("show");
+  typingEngine = { state, start, stop };
 
+  goEl.classList.add("show");
+  
   setTimeout(() => {
     goEl.classList.remove("show");
     start();
@@ -114,9 +111,8 @@ export function initRaceScene(onFinishCb) {
 
       const charsPerSec = (p.wpm * 5) / 60;
       const percentPerSec = (charsPerSec / text.length) * 100;
-
       p.progress += percentPerSec * dt;
-      // Check if reached finish line
+
       if (p.progress >= 100) {
         p.progress = 100;
         p.finished = true;
@@ -124,7 +120,7 @@ export function initRaceScene(onFinishCb) {
       }
     }
 
-    const VISUAL_LIMIT = 92;
+    const VISUAL_LIMIT = 92; 
     players.forEach(p => {
       const visualPos = (p.progress / 100) * VISUAL_LIMIT;
       p.spr.style.left = visualPos + "%";
@@ -145,42 +141,39 @@ export function initRaceScene(onFinishCb) {
     if (progEl) progEl.textContent = Math.round(human.progress) + "%";
     if (barEl) barEl.style.width = human.progress + "%";
 
-    const allBotsDone = players.filter(p => p.id != "you").every(p => p.finished);
+    const allBotsDone = players.filter(p => p.id !== "you").every(p => p.finished);
     const playerDone = human.finished;
 
     if (playerDone || (allBotsDone && !playerDone)) {
-      if (!playerDone || allBotsDone) {
+      if (playerDone || allBotsDone) {
         raceStarted = false;
         stop();
         setTimeout(finalize, 1000);
       }
     }
+    
     if (raceStarted) requestAnimationFrame(loop);
   }
 
   function finalize() {
     const sorted = players.slice().sort((a, b) => {
-      // If someone didn't finish, put them at the end
       if (a.finished && b.finished) return a.finishTime - b.finishTime;
       if (a.finished) return -1;
       if (b.finished) return 1;
       return b.progress - a.progress;
     });
+
     const rank = sorted.findIndex(p => p.id === "you") + 1;
     let coins = 0;
     let title = "";
 
-    if (rank === 1) {
-      coins = 100; title = "🏆 1st Place!"; SFX.victory.play();
-    }
-    else if (rank === 2) {
-      coins = 50; title = "🥈 2nd Place!"; SFX.lose.play();
-    }
+    if (rank === 1) { coins = 100; title = "🏆 1st Place!"; SFX.victory.play(); }
+    else if (rank === 2) { coins = 50; title = "🥈 2nd Place!"; SFX.lose.play(); }
     else { coins = 10; title = "🥉 3rd Place!"; SFX.lose.play(); }
 
     addCoins(coins);
+    
     resultsEl.style.display = "block";
-
     resultsEl.innerHTML = `
     <h1 style="font-family: var(--font-marker); font-size: 40px; margin: 0; color: #2c3e50;">${title}</h1>
     <p style="font-size: 18px; color: #555;">You earned <strong>${coins} 🪙</strong></p>
@@ -192,7 +185,8 @@ export function initRaceScene(onFinishCb) {
         <span>${p.finished ? 'Finished' : Math.floor(p.progress) + '%'}</span>
       </div>
       `).join('')}
-    </div >
+    </div>
+    
     <div style="display:flex; gap:10px; justify-content:center;">
       <button class="nav-pill" onclick="location.reload()">RACE AGAIN</button>
       <button class="nav-pill" style="background: #444;" onclick="location.reload()">HOME</button>
