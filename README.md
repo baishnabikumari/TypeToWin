@@ -1,6 +1,8 @@
-**TypeToWin** - A game to increase you typing skills.
 
-__Features(how to play and more info).__
+**Note** All new Ui with 0 ai own made on canva with card dail.
+**TypeToWin** - A game to increase you typing skills .
+
+__Features(how to play and more informations).__
 
 1. You can select you own hero using card system on the main page(2 heroes that is "Packo and Beavy" are free but rest are locked you can unlock it using coins.
 2. When you are new to this game you will get 1500 coins for nothing i mean you will get some.
@@ -10,6 +12,8 @@ __Features(how to play and more info).__
 6. So, after click a hero you just have to press "start race" and boom the race is started no you just need to focus on the words which are on the screen to type the same which is mentioned.
 7. What if all the 4 bots reached the finish line before you? Well ya you lose you need to scroll down and need to click "play again" to beat them.
 8. If you wan to quit the game in between you just need to press the back to home button on left right up corner but that will not give you any base coins that is 100 for participation(X).
+
+9. Removed the old text and implemented the new one for better understanding and fast gameplay.
 
 __You wanna make changes by own? here is what you can do 👇🏽__
 1. Clone the repository to your device.
@@ -26,8 +30,7 @@ __You wanna make changes by own? here is what you can do 👇🏽__
 
 __Disclaimer -__ used some codes which was coded by me on any other device just pasted here to save time.
 
-__NOTE -__ If you see any thing improper or AI use, or something i promice you that should be not more than 5%. Why these last disclaimer and note? - cuz i believe the reviewer who is reviewing my project should know the truth so ya AI<5%.
+__NOTE -__  Reviewer told me to remove ai use so i removed it and made my game more attractive with all new UI (made using Canva).
 
-__Thanks HackClub and Tongyu for milkyway, i love Milkyway and HC__
 **Happy coding**
 
